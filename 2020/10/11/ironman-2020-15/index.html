@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 15] 遠征 Kotlin × Spring Boot 設定資料庫與匯入初始資料 | Devin Blog</title>
+  <meta name="description" content="接下來，我們將嘗試在專案內連接資料庫，資料庫部份會採用 H2 資料庫進行練習，H2 是一個開源的資料庫引擎，其底層是使用 Java 所實作的資料庫，它可以作為嵌入式資料庫使用，在開發環境使用與測試非常方便，不像MySQL等資料庫需要啟動一個服務與設定相關配置才能夠使用，大大減少環境設定成本。 我們利用昨日所建置的專案繼續實作，本章文章也有將專案放到 Github 供大家參考，我們先在專案的 bui">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 15] 遠征 Kotlin × Spring Boot 設定資料庫與匯入初始資料">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-15/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="接下來，我們將嘗試在專案內連接資料庫，資料庫部份會採用 H2 資料庫進行練習，H2 是一個開源的資料庫引擎，其底層是使用 Java 所實作的資料庫，它可以作為嵌入式資料庫使用，在開發環境使用與測試非常方便，不像MySQL等資料庫需要啟動一個服務與設定相關配置才能夠使用，大大減少環境設定成本。 我們利用昨日所建置的專案繼續實作，本章文章也有將專案放到 Github 供大家參考，我們先在專案的 bui">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/201211793KwyiggT4w.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/20121179MGrRTrntYS.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/20121179ECBoy0Y5FT.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/20121179x6Bqlg4PRH.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/20121179UtDB4wALRc.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/201211799TjjnUalyz.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/20121179r6CtfZrxQp.png">
+<meta property="article:published_time" content="2020-10-11T11:17:25.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:17:25.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200924/201211793KwyiggT4w.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-15/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-15" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 15] 遠征 Kotlin × Spring Boot 設定資料庫與匯入初始資料
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-15/" class="article-date">
+	  <time datetime="2020-10-11T11:17:25.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-15/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>接下來，我們將嘗試在專案內連接資料庫，資料庫部份會採用 <code>H2</code> 資料庫進行練習，<code>H2</code> 是一個開源的資料庫引擎，其底層是使用 Java 所實作的資料庫，它可以作為<code>嵌入式資料庫</code>使用，在開發環境使用與測試非常方便，不像MySQL等資料庫需要啟動一個服務與設定相關配置才能夠使用，大大減少環境設定成本。</p>
+<p>我們利用昨日所建置的專案繼續實作，本章文章也有將專案放到 <a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-h2-example">Github</a> 供大家參考，我們先在專案的 <code>build.gradle.kts</code> 檔案加入兩個套件 <code>JDBC</code>與<code>H2</code>配置到 <code>Gradle</code> 工具設定中，詳細可參考下面內容與結果圖片：</p>
+<p>(1) 在 build.gradle.kts 的 dependencies 加入以下內容</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在 dependencies 加入下面兩段</span></span><br><span class="line">implementation(<span class="string">&quot;org.springframework.boot:spring-boot-starter-jdbc&quot;</span>)</span><br><span class="line">runtimeOnly(<span class="string">&quot;com.h2database:h2&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(2) 加入完畢後，應為以下結果，供大家參考<br><img src="https://ithelp.ithome.com.tw/upload/images/20200924/201211793KwyiggT4w.png" alt="https://ithelp.ithome.com.tw/upload/images/20200924/201211793KwyiggT4w.png"></p>
+<p>(3) 設定 <code>application.yml</code> 檔案內容與說明如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8080</span> <span class="comment"># 設定專案 port 為 8080</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">h2:</span></span><br><span class="line">    <span class="attr">console:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment"># 啟動 H2 console</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/h2-console</span> <span class="comment"># 設定 H2 管理頁面路徑</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:h2:mem:ironman;DB_CLOSE_DELAY=-1</span>  <span class="comment"># 設定 H2 資料庫連線位置</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">sa</span> <span class="comment"># 設定資料庫登入使用者</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">Ironman0924!</span> <span class="comment"># 設定資料庫登入密碼</span></span><br></pre></td></tr></table></figure>
+
+<p>完成上面步驟後，我們可以運行專案，打開瀏覽器瀏覽 <a target="_blank" rel="noopener" href="http://localhost:8080/h2-console">http://localhost:8080/h2-console</a> 頁面，就可以看到 H2 後端管理頁面，如下圖：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200924/20121179MGrRTrntYS.png" alt="https://ithelp.ithome.com.tw/upload/images/20200924/20121179MGrRTrntYS.png"></p>
+<p>這邊我們要修改登入資訊 <code>JDBC URL</code> 、 <code>UserName</code>、<code>Password</code>，此三個欄位要與 application 內容設定相同，設定完成後按連線（Connect），即可進入管理頁面：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200924/20121179ECBoy0Y5FT.png" alt="https://ithelp.ithome.com.tw/upload/images/20200924/20121179ECBoy0Y5FT.png"></p>
+<p>完成資料庫設定後，我們就要來匯入資料進行測試，而 H2 資料庫會自動抓取專案 resource 資料夾下的 SQL 檔案進行建置，故我們在專案資料夾的 src/main/resources 建立兩個檔案 <code>schema.sql</code>、<code>data.sql</code>，schema 檔案為建立資料表，data.sql 檔案為 insert 資料到資料表內，檔案內容參考如下：</p>
+<ul>
+<li>schema.sql</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> Student;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Student (</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">INT</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">    <span class="keyword">name</span>  <span class="built_in">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    email <span class="built_in">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>data.sql</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Student (<span class="keyword">id</span>, <span class="keyword">name</span>, email) <span class="keyword">VALUES</span></span><br><span class="line">(<span class="number">1</span>, <span class="string">&#x27;Devin&#x27;</span>, <span class="string">&#x27;test1@gmail.com&#x27;</span>),</span><br><span class="line">(<span class="number">2</span>, <span class="string">&#x27;Jack&#x27;</span>, <span class="string">&#x27;test2@gmail.com&#x27;</span>),</span><br><span class="line">(<span class="number">3</span>, <span class="string">&#x27;Eric&#x27;</span>, <span class="string">&#x27;test3@gmail.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>檔案放置完畢後，我們將專案重新運行，重新進入 H2 管理頁面（<a target="_blank" rel="noopener" href="http://localhost:8080/h2-console">http://localhost:8080/h2-console</a>），會發現到左手邊已經自動建立 Student 資料表，我們利用中間的視窗輸入查詢 SQL－<code>SELECT * FROM Student</code> 並運行此段 SQL，會發現預設資料也已經匯入，如下圖：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200924/20121179x6Bqlg4PRH.png" alt="https://ithelp.ithome.com.tw/upload/images/20200924/20121179x6Bqlg4PRH.png"></p>
+<p>透過上面步驟，我們已經順利完成資料庫建置與匯入初始資料，而上面我們使用的 H2 資料庫是採用記憶體類型進行資料儲存，所以當我們將專案重新運行後，會發現到資料其實會立即被清空，此功能其實非常適合測試環境，當測試完畢就立即刪除資料。但如果有朋友是想要將資料保存下來，H2 其實也有提供檔案類型方式進行資料儲存，執行方式說明如下：</p>
+<h2 id="執行方式"><a href="#執行方式" class="headerlink" title="執行方式"></a>執行方式</h2><ol>
+<li><p>在記憶體執行</p>
+<p> 表示資料庫資料是<strong>儲存在伺服器的記憶體</strong>，當我們關閉連線後資料庫會立即被清空，此方式非常適合測試環境</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 application 檔案需要設定為此段</span></span><br><span class="line"><span class="string">jdbc:h2:mem:ironman;DB_CLOSE_DELAY=-1</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>嵌入式</p>
+<p> 可將<strong>資料庫儲存為檔案</strong>，進行資料持久性保存</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 application 檔案需要設定為此段</span></span><br><span class="line"><span class="string">jdbc:h2:file:./src/main/resources/data/ironman;AUTO_SERVER=true</span></span><br></pre></td></tr></table></figure>
+
+<p> file: 後面接的字串「./src/main/resources/data/ironman」為檔案所儲存路徑，表示資料庫會為我們儲存在 resource/data/ 資料夾下，並將資料庫命名為 <code>ironman</code> 資料庫，若第一次連線<strong>會自動建立資料庫與路徑對應的資料夾</strong></p>
+</li>
+<li><p>服務模式</p>
+<p> H2支援三種服務模式：</p>
+<ul>
+<li><code>Web server</code> 支援使用瀏覽器瀏覽管理頁面 H2 Console</li>
+<li><code>TCP server</code> 支援 Client/ Server 連線方式</li>
+<li><code>PG server</code> 支援 PostgreSQL Client</li>
+</ul>
+</li>
+<li><p>連線字串參數</p>
+<ul>
+<li><code>DB_CLOSE_DELAY</code> 要求最後一個正在連線的連線斷開後，不要關閉資料庫</li>
+<li><code>MODE=MySQL</code> 相容模式，H2相容多種資料庫，該值可以為：DB2、Derby、HSQLDB、MSSQLServer、MySQL、Oracle、PostgreSQL</li>
+<li><code>AUTO_RECONNECT=TRUE</code> 連線丟失後自動重新連線</li>
+<li><code>AUTO_SERVER=TRUE</code> 啟動自動混合模式，允許開啟多個連線，該引數不支援在記憶體中執行模式</li>
+<li><code>TRACE_LEVEL_SYSTEM_OUT、TRACE_LEVEL_FILE</code> 輸出跟蹤日誌到控制檯或檔案， 取值0為OFF，1為ERROR（預設值），2為INFO，3為DEBUG</li>
+<li><code>SET TRACE_MAX_FILE_SIZE mb</code> 設定跟蹤日誌檔案的大小，預設為16M</li>
+</ul>
+</li>
+</ol>
+<p>我們嘗試將原本的設定改為使用檔案方式進行儲存，修改 application.yml 檔案的 datasource.url 設定，會發現專案 Resource 會自動出現 Data 資料夾與 DB 檔案，如下圖：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200924/20121179UtDB4wALRc.png" alt="https://ithelp.ithome.com.tw/upload/images/20200924/20121179UtDB4wALRc.png"></p>
+<p>而為了要驗證資料有保存，可以先將 schema.sql 檔案刪除，避免重新運行專案後還是會將資料表 drop的狀況，再進入管理後台 insert 資料（insert sql 可參考下面），再重新運行專案與查詢資料，此時會發現資料確實有六筆出現，如下面結果：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Student (<span class="keyword">id</span>, <span class="keyword">name</span>, email) <span class="keyword">VALUES</span></span><br><span class="line">(<span class="number">4</span>, <span class="string">&#x27;Devin&#x27;</span>, <span class="string">&#x27;test1@gmail.com&#x27;</span>),</span><br><span class="line">(<span class="number">5</span>, <span class="string">&#x27;Jack&#x27;</span>, <span class="string">&#x27;test2@gmail.com&#x27;</span>),</span><br><span class="line">(<span class="number">6</span>, <span class="string">&#x27;Eric&#x27;</span>, <span class="string">&#x27;test3@gmail.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200924/201211799TjjnUalyz.png" alt="https://ithelp.ithome.com.tw/upload/images/20200924/201211799TjjnUalyz.png"></p>
+<p>最後，我們來嘗試撰寫讀取資料庫的程式進行抓取資料庫資料，運用專案設定時所加入的 <code>JDBC</code> 套件撰寫，步驟與程式說明如下：</p>
+<ol>
+<li><p>將昨日在 DemoApplication.kt 檔案中加入的 HomeController 程式進行調整，修改為以下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HomeController</span></span>(<span class="meta">@Autowired</span> environment: Environment) &#123;</span><br><span class="line">    <span class="comment">// 取得 application.yml 設定的配置數值</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">val</span> url = environment.getProperty(<span class="string">&quot;spring.datasource.url&quot;</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">val</span> username = environment.getProperty(<span class="string">&quot;spring.datasource.username&quot;</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">val</span> password = environment.getProperty(<span class="string">&quot;spring.datasource.password&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 資料庫連線</span></span><br><span class="line">    <span class="keyword">val</span> connection: Connection = DriverManager.getConnection(url, username, password)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 取得 Student 所有資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(<span class="meta-string">&quot;/students&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getStudentData</span><span class="params">()</span></span>: ArrayList&lt;MutableMap&lt;String, Any&gt;&gt; &#123;</span><br><span class="line">        <span class="comment">// 建立 Statement 進行資料庫操作</span></span><br><span class="line">        <span class="keyword">val</span> statement: Statement = connection.createStatement()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 取得 Student 資料表所有資料</span></span><br><span class="line">        <span class="keyword">val</span> record: ResultSet = statement.executeQuery(<span class="string">&quot;SELECT * FROM Student&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 將 Student 資料取出並儲存在一個集合進行輸出</span></span><br><span class="line">        <span class="keyword">val</span> result: ArrayList&lt;MutableMap&lt;String, Any&gt;&gt; = ArrayList()</span><br><span class="line">        <span class="keyword">while</span> (record.next()) &#123;</span><br><span class="line">            <span class="keyword">val</span> item = mutableMapOf&lt;String, Any&gt;()</span><br><span class="line">            item[<span class="string">&quot;id&quot;</span>] = record.getInt(<span class="string">&quot;id&quot;</span>)</span><br><span class="line">            item[<span class="string">&quot;name&quot;</span>] = record.getString(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">            item[<span class="string">&quot;email&quot;</span>] = record.getString(<span class="string">&quot;email&quot;</span>)</span><br><span class="line">            result.add(item)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>將專案重新運行，打開瀏覽器輸入「<a target="_blank" rel="noopener" href="http://localhost:8080/students">http://localhost:8080/students</a>」進行查詢，會得到一份 JSON檔案，即為我們資料庫目前所儲存的資料。</p>
+</li>
+</ol>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200924/20121179r6CtfZrxQp.png" alt="https://ithelp.ithome.com.tw/upload/images/20200924/20121179r6CtfZrxQp.png"></p>
+<p>以上專案有放在 <a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-h2-example">Github</a> 上，如有遇到問題，大家可以直接參考</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-14/" title="[Day 14] 遠征 Kotlin × Spring Boot 專案配置介紹"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-16/" title="[Day 16] 遠征 Kotlin × 使用 Spring Data JPA 操作資料庫 (1)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-15/';
+        
+        this.page.identifier = 'ironman-2020-15';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

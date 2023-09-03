@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 08] 遠征 Kotlin × 類別繼承、介面、抽象 | Devin Blog</title>
+  <meta name="description" content="昨日我們已經介紹 Kotlin 類別的基本使用方式，接下來我們來談繼承、介面與抽象的使用方法，在 Kotlin 中，我們要使用繼承時，會有以下三件事要注意：  需要使用 ： 操作符號 被繼承的類別必須在 class 前面加上 open 關鍵字 若父類別的主建構函數（Primary Constructor）有參數，必須在繼承時帶入資料  我們利用上面三點事項撰寫下面範例： 1234567891011">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 08] 遠征 Kotlin × 類別繼承、介面、抽象">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-08/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="昨日我們已經介紹 Kotlin 類別的基本使用方式，接下來我們來談繼承、介面與抽象的使用方法，在 Kotlin 中，我們要使用繼承時，會有以下三件事要注意：  需要使用 ： 操作符號 被繼承的類別必須在 class 前面加上 open 關鍵字 若父類別的主建構函數（Primary Constructor）有參數，必須在繼承時帶入資料  我們利用上面三點事項撰寫下面範例： 1234567891011">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-11T11:23:03.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:23:03.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-08/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-08" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 08] 遠征 Kotlin × 類別繼承、介面、抽象
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-08/" class="article-date">
+	  <time datetime="2020-10-11T11:23:03.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-08/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>昨日我們已經介紹 Kotlin 類別的基本使用方式，接下來我們來談<code>繼承</code>、<code>介面</code>與<code>抽象</code>的使用方法，在 Kotlin 中，我們要使用<code>繼承</code>時，會有以下三件事要注意：</p>
+<ol>
+<li>需要使用 <code>：</code> 操作符號</li>
+<li>被繼承的類別必須在 <code>class</code> 前面加上 <code>open</code> 關鍵字</li>
+<li>若父類別的主建構函數（Primary Constructor）有參數，必須在繼承時帶入資料</li>
+</ol>
+<p>我們利用上面三點事項撰寫下面範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 呼叫 Author 類別</span></span><br><span class="line">    <span class="keyword">val</span> author = Author(<span class="string">&quot;Devin&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出 Devin</span></span><br><span class="line">    println(author.name)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加上 open 關鍵字代表此類別可被繼承</span></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(name: String)&#123;</span><br><span class="line">    <span class="keyword">val</span> name: String = name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立一個 Author 類別繼承 Person 類別</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Author</span></span>(name: String) : Person(name)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>而當<code>子類別</code>繼承後，如果子類別要使用父類別的函數，我們就要使用到 <code>super</code> 關鍵字進行呼叫，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> man1 = SuperMan(<span class="string">&quot;Devin&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> man2 = SuperMan(<span class="string">&quot;Eric&quot;</span>, <span class="string">&quot;Eric@Eric.com&quot;</span>)</span><br><span class="line"></span><br><span class="line">    println(man1.name)    <span class="comment">// 印出 Devin</span></span><br><span class="line">    println(man1.email)   <span class="comment">// 印出 &quot;&quot;</span></span><br><span class="line">    println(man2.name)    <span class="comment">// 印出 Eric</span></span><br><span class="line">    println(man2.email)   <span class="comment">// 印出 &quot;Eric@Eric.com&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">val</span> name: String) &#123;</span><br><span class="line">    <span class="keyword">var</span> email: String = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(name: String, email: String) : <span class="keyword">this</span>(name) &#123;</span><br><span class="line">        <span class="keyword">this</span>.email = email</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperMan</span> : <span class="type">Person &#123;</span></span></span><br><span class="line">    <span class="keyword">constructor</span>(name: String) : <span class="keyword">super</span>(name)</span><br><span class="line">    <span class="keyword">constructor</span>(name: String, email: String) : <span class="keyword">super</span>(name, email)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>當子類別繼承父類別後，若子類別想要覆寫函數可使用 <code>override</code> 關鍵字，記得繼承的函數也要使用 <code>open</code> 關鍵字進行宣告，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> man = SuperMan(<span class="string">&quot;Devin&quot;</span>)</span><br><span class="line">    man.sayHello()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">val</span> name: String) &#123;</span><br><span class="line">    <span class="keyword">var</span> email: String = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(name: String, email: String) : <span class="keyword">this</span>(name) &#123;</span><br><span class="line">        <span class="keyword">this</span>.email = email</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">open</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Hi, 我是Person&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperMan</span> : <span class="type">Person &#123;</span></span></span><br><span class="line">    <span class="keyword">constructor</span>(name: String) : <span class="keyword">super</span>(name)</span><br><span class="line">    <span class="keyword">constructor</span>(name: String, email: String) : <span class="keyword">super</span>(name, email)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 覆寫方法</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Hi, 我是SuperMan&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 Kotlin 中使用繼承時，要注意程式<code>執行先後順序</code>，我們會直接利用範例搭配下面步驟逐步觀察：</p>
+<ol>
+<li>程式會先執行 SuperMan 類別主要建構函數的 println 方法</li>
+<li>再進入父類別 Person ，執行該類別的 init 區塊程式</li>
+<li>再執行父類別 Person的次建構函數</li>
+<li>回到子類別，執行該類別的 init 區塊程式</li>
+<li>再因 main 函數呼叫 sayHello 方法，藉由 super 關鍵字呼叫父類別的 sayHello 函數</li>
+<li>最後才會執行子類別的 sayHello println 函數</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> man = SuperMan(<span class="string">&quot;Devin&quot;</span>)</span><br><span class="line">    man.sayHello()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">open</span> <span class="keyword">val</span> name: String) &#123;</span><br><span class="line">    <span class="keyword">var</span> email: String = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 執行步驟 2</span></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Person init 區塊&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 執行步驟 3</span></span><br><span class="line">    <span class="keyword">constructor</span>(name: String, email: String) : <span class="keyword">this</span>(name) &#123;</span><br><span class="line">        println(<span class="string">&quot;Person Name: <span class="variable">$name</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">this</span>.email = email</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 執行步驟 5</span></span><br><span class="line">    <span class="keyword">open</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Hi, 我是Person&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 執行步驟 1</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperMan</span></span>(<span class="keyword">override</span> <span class="keyword">val</span> name: String) : Person(name, email = <span class="string">&quot;Test&quot;</span>.also &#123; println(<span class="string">&quot;帶入 Email 資料&quot;</span>) &#125;) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 執行步驟 4</span></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        println(<span class="string">&quot;SuperMan init 區塊&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 執行步驟 6</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.sayHello()</span><br><span class="line">        println(<span class="string">&quot;Hi, 我是SuperMan&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在繼承特性中，我們可以使用 <code>var</code> 定義的變數覆寫（override） <code>val</code> 父類別屬性，但要記得我們無法使用 <code>val</code> 覆寫（override） <code>var</code> 屬性，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    SuperMan(<span class="string">&quot;devin&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定義可繼承的 Person 類別與 val name 屬性</span></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">open</span> <span class="keyword">val</span> name: String)</span><br><span class="line"></span><br><span class="line"><span class="comment">// override 父類別屬性，將 val 改為 var</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperMan</span></span>(<span class="keyword">private</span> <span class="keyword">var</span> _name: String): Person(_name) &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> name: String = _name</span><br><span class="line">        <span class="keyword">get</span>() = field.capitalize()</span><br><span class="line">        <span class="keyword">set</span>(value) &#123;</span><br><span class="line">            field = value.trim()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        println(name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="介面-Interface"><a href="#介面-Interface" class="headerlink" title="介面 Interface"></a>介面 Interface</h2><p>Kotlin 與 Java 一樣，只能繼承一個類別，但可以實作多個介面，而介面實作也是使用 <code>：</code> 操作符號進行實現，而 Kotlin 與 Java 不同的地方是 Kotlin 的 Interface 可以自己實作函數，而使用介面的好處主要是為了解決耦合問題（Coupling）與支援多重繼承功能，例如以下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> myClass = MyClass()</span><br><span class="line">    myClass.sayHello()</span><br><span class="line">    myClass.printData()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Interface1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">printData</span><span class="params">()</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 介面本身自已實作</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">haveImplement</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Kotlin 介面可自己實作，而且類別不需要實作&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Interface2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 繼承多重介面</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> : <span class="type">Interface1</span>, <span class="type">Interface2 &#123;</span></span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">printData</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// 呼叫介面已實作函數</span></span><br><span class="line">        haveImplement()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Hi&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>當介面方法相同時，我們可以使用 super 關鍵字進行呼叫特定介面的方法，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    MyClass().haveImplement()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Interface1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">haveImplement</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Interface1 實作&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Interface2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">haveImplement</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Interface2 實作&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 繼承多重介面</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> : <span class="type">Interface1</span>, <span class="type">Interface2 &#123;</span></span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">haveImplement</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// 利用 super 呼叫指定介面的函數</span></span><br><span class="line">        <span class="keyword">super</span>&lt;Interface2&gt;.haveImplement()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>前面提到的耦合（Coupling）其實就是指兩個模組之間的相依性，若相依性越高，則耦合度越高，即為高耦合問題，耦合性越高的話，容易因為小需求變動而連貫影響整個系統或其他模組，例如以下範例，類別 A 與 類別 B 存在直接相依性的問題：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">val</span> message: String</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">(a: <span class="type">A</span>)</span></span> &#123;</span><br><span class="line">        println(a.message)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>實現低耦合就是對兩類別之間進行解耦，解除類別之間的直接關係，將直接關係轉換成間接關係：</p>
+<ol>
+<li><p>將類別共用方法抽離成 Interface，再直接使用 override 方法執行</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    Boy().sayHello()</span><br><span class="line">    Girl().sayHello()</span><br><span class="line">    Woman().sayHello()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span>: <span class="built_in">Unit</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Boy</span> : <span class="type">Person &#123;</span></span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Hello, Boy&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Girl</span> : <span class="type">Person &#123;</span></span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Hello, Girl&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Woman</span> : <span class="type">Person &#123;</span></span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">sayHello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;Hello, Woman&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用依賴注入（Dependency Injection, DI）方法達到類別彼此間的間接關係，即我們是將被依賴物件注入被動接收物件當中，以下面範例為例：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 將被依賴物件注入被動接收物件</span></span><br><span class="line">    <span class="comment">// 若學生有學習新的語言，只要新增一個類別再丟入 MyStudent 即可</span></span><br><span class="line">    MyStudent(English()).study()</span><br><span class="line">    MyStudent(Chinese()).study()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立學生類別</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyStudent</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> language: Language) &#123;</span><br><span class="line">    <span class="comment">// 正在讀書</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">study</span><span class="params">()</span></span> &#123;</span><br><span class="line">        language.speak()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立邏輯共用介面－語言</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Language</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">speak</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 當需要 English 時，建立類別</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">English</span> : <span class="type">Language &#123;</span></span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;學生正在練習英文口說&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 當需要 Chinese 時，建立類別</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> : <span class="type">Language &#123;</span></span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;學生正在練習中文口說&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="抽象類別-abstract-class"><a href="#抽象類別-abstract-class" class="headerlink" title="抽象類別 abstract class"></a>抽象類別 abstract class</h2><p>在 Kotlin 中抽象類別會使用到 abstract 關鍵字，必須加在 class 或 function 前面，而抽象類別無法像普通類別一樣被實例化（Instance），它只能被類別繼承，而抽象類別也能使用建構函數進行外部參數引入，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    SuperMan(<span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;&quot;</span>).hello()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定義抽象類別</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> email: String) &#123;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="function"><span class="keyword">fun</span> <span class="title">hello</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定義</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperMan</span></span>(name: String, email: String) : Person(name, email) &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">hello</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// 印出「我是 Devin」</span></span><br><span class="line">        println(<span class="string">&quot;我是 <span class="variable">$name</span> &quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>抽象類別與介面主要差別還是在於使用場景或身份的不同，因類別只能單一繼承，所以使用抽象類別的子類別幾乎都是會有高關聯的，但介面不見得，我們可以依需求來選擇合適的介面實作，建議大家還是要依照需求來選擇合適方式。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-07/" title="[Day 07] 遠征 Kotlin × 類別與物件"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-09/" title="[Day 09] 遠征 Kotlin × 例外處理"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-08/';
+        
+        this.page.identifier = 'ironman-2020-08';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 10] 遠征 Kotlin × 泛型 Generic | Devin Blog</title>
+  <meta name="description" content="泛型 Generic 介紹在 Collections 章節中，我們有提到 List、Set 等集合用法，眼尖的朋友可能會發現到，在宣告一個新集合時，我們都必須使用 &lt; &gt; 和設定型態來進行宣告， 而這樣的方法其實就是一種泛型（Generic）應用，集合只是一個容器，為我們提供迭代元素、新增元素、刪除元素等操作方法，當我們需求上需要儲存什麼樣別的資料，再為這個容器加上型別即可使用。 可能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 10] 遠征 Kotlin × 泛型 Generic">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-10/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="泛型 Generic 介紹在 Collections 章節中，我們有提到 List、Set 等集合用法，眼尖的朋友可能會發現到，在宣告一個新集合時，我們都必須使用 &lt; &gt; 和設定型態來進行宣告， 而這樣的方法其實就是一種泛型（Generic）應用，集合只是一個容器，為我們提供迭代元素、新增元素、刪除元素等操作方法，當我們需求上需要儲存什麼樣別的資料，再為這個容器加上型別即可使用。 可能">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-11T11:21:25.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:21:25.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-10/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-10" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 10] 遠征 Kotlin × 泛型 Generic
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-10/" class="article-date">
+	  <time datetime="2020-10-11T11:21:25.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-10/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="泛型-Generic-介紹"><a href="#泛型-Generic-介紹" class="headerlink" title="泛型 Generic 介紹"></a>泛型 Generic 介紹</h2><p>在 Collections 章節中，我們有提到 <code>List</code>、<code>Set</code> 等集合用法，眼尖的朋友可能會發現到，在宣告一個新集合時，我們都必須使用 <code>&lt; &gt;</code> 和設定型態來進行宣告， 而這樣的方法其實就是一種泛型（Generic）應用，集合只是一個容器，為我們提供迭代元素、新增元素、刪除元素等操作方法，當我們需求上需要儲存什麼樣別的資料，再為這個容器加上型別即可使用。</p>
+<p>可能有朋友會好奇，為什麼會需要使用泛型？假設今天我們有一個集合物件，裡面充滿著各種型別的資料，那我們在引用這個集合時，必然會在程式撰寫上處理許多型別轉型的工作，而型別轉型工作會讓我們程式多了一層轉換工作，所以為了減少不必要的轉型工作，我們可以提前在編譯期間（Compile Time）利用泛型告知此集合或方法屬於哪種型別，也是方便我們在開發時清楚要使用什麼類型的資料進行溝通，所以在型別安全檢查、程式碼品質、開發效率等都會帶來好處。</p>
+<h2 id="泛型使用"><a href="#泛型使用" class="headerlink" title="泛型使用"></a>泛型使用</h2><p>泛型可以讓我們使用在類別、介面、函數上，我們可以直接使用下面範例來觀察，我們定義一個使用泛型的Person 類別，再定義其他資料類別，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> teacher: Person&lt;Teacher&gt; = Person(Teacher(<span class="string">&quot;Eric&quot;</span>, <span class="string">&quot;A12345&quot;</span>))</span><br><span class="line">    <span class="keyword">val</span> student: Person&lt;Student&gt; = Person(Student(<span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;B991&quot;</span>))</span><br><span class="line"></span><br><span class="line">    println(<span class="string">&quot;老師姓名： <span class="subst">$&#123;teacher.data.name&#125;</span>, 職員編號： <span class="subst">$&#123;teacher.data.employeeNumber&#125;</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;學生姓名： <span class="subst">$&#123;student.data.name&#125;</span>, 學號： <span class="subst">$&#123;student.data.studentID&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出以下結果：</span></span><br><span class="line">    <span class="comment">// 老師姓名： Eric, 職員編號： A12345</span></span><br><span class="line">    <span class="comment">// 學生姓名： Devin, 學號： B991</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立一個使用泛型物件的類別</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>&lt;<span class="type">T</span>&gt;</span>(person: T) &#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="keyword">data</span>: T = person</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立一個老師類別，具有name、employeeNumber參數</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Teacher</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> employeeNumber: String)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立一個學生類別，具有name、studentID參數</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> studentID: String)</span><br></pre></td></tr></table></figure>
+
+<p>泛型參數我們通常會利用字母 T（英文 Type）表示，若要使用其他名稱也可以，但在支援泛型的程式語言中大多使用 T 來表示，這樣可以讓其他開發者更容易了解我們的程式碼，而泛型還有其他常用的命名，如下：</p>
+<ul>
+<li>E - Element</li>
+<li>K - Key</li>
+<li>N - Number</li>
+<li>T - Type</li>
+<li>V - Value</li>
+<li>R - Return</li>
+<li>S, U, V etc. - 2nd, 3rd, 4th types</li>
+</ul>
+<h2 id="多泛型參數"><a href="#多泛型參數" class="headerlink" title="多泛型參數"></a>多泛型參數</h2><p>泛型也允許使用多個泛型參數，參數名稱建議可參考上面常見規範，我們可以將上面的範例進行修改，在原本的 Person 類別中加入一個支援多種泛型的函數，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> teacher: Person&lt;Teacher&gt; = Person(Teacher(<span class="string">&quot;Eric&quot;</span>, <span class="string">&quot;A12345&quot;</span>))</span><br><span class="line">    <span class="keyword">val</span> student: Person&lt;Student&gt; = Person(Student(<span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;B991&quot;</span>))</span><br><span class="line"></span><br><span class="line">    println(<span class="string">&quot;老師姓名： <span class="subst">$&#123;teacher.data.name&#125;</span>, 職員編號： <span class="subst">$&#123;teacher.data.employeeNumber&#125;</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;學生姓名： <span class="subst">$&#123;student.data.name&#125;</span>, 學號： <span class="subst">$&#123;student.data.studentID&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    teacher.speak &#123; println(<span class="string">&quot;<span class="subst">$&#123;teacher.data.name&#125;</span>： 開始上課&quot;</span>)&#125;</span><br><span class="line">    student.speak &#123; println(<span class="string">&quot;<span class="subst">$&#123;student.data.name&#125;</span>： 老師好&quot;</span>)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立一個使用泛型物件的類別</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>&lt;<span class="type">T</span>&gt;</span>(person: T) &#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="keyword">data</span>: T = person</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定義一個支援 lambda 運算式的函數，R為新增的泛型參數，作為函數的返回類型</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="type">&lt;R&gt;</span> <span class="title">speak</span><span class="params">(func: (<span class="type">T</span>) -&gt; <span class="type">R</span>)</span></span>: R? &#123;</span><br><span class="line">        <span class="keyword">return</span> func(<span class="keyword">data</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Teacher</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> employeeNumber: String)</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> studentID: String)</span><br></pre></td></tr></table></figure>
+
+<h2 id="多泛型實例操作"><a href="#多泛型實例操作" class="headerlink" title="多泛型實例操作"></a>多泛型實例操作</h2><p>上面範例我們都只使用一個資料進行操作，若我們想要一次使用多筆資料，此時可以使用 <code>vararg</code> 關鍵字，讓泛型類別可支援多個參數，參數即為元素陣列，而既然是陣列資料，我們就可以使用索引進行取值，我們可以搭配 <code>get</code> 運算函數進行索引取值動作，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> teacher: Person&lt;Teacher&gt; = Person(Teacher(<span class="string">&quot;Eric&quot;</span>, <span class="string">&quot;A12345&quot;</span>))</span><br><span class="line">    <span class="keyword">val</span> student: Person&lt;Student&gt; = Person(Student(<span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;B991&quot;</span>), Student(<span class="string">&quot;Jack&quot;</span>, <span class="string">&quot;B992&quot;</span>))</span><br><span class="line"></span><br><span class="line">    println(<span class="string">&quot;老師姓名： <span class="subst">$&#123;teacher[<span class="number">0</span>]?.name&#125;</span>, 職員編號： <span class="subst">$&#123;teacher[<span class="number">0</span>]?.employeeNumber&#125;</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;學生姓名： <span class="subst">$&#123;student[<span class="number">0</span>]?.name&#125;</span>, 學號： <span class="subst">$&#123;student[<span class="number">0</span>]?.studentID&#125;</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;學生姓名： <span class="subst">$&#123;student[<span class="number">1</span>]?.name&#125;</span>, 學號： <span class="subst">$&#123;student[<span class="number">1</span>]?.studentID&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    teacher.speak(<span class="number">0</span>) &#123; println(<span class="string">&quot;<span class="subst">$&#123;teacher[<span class="number">0</span>]?.name&#125;</span>： 開始上課&quot;</span>)&#125;</span><br><span class="line">    student.speak(<span class="number">0</span>) &#123; println(<span class="string">&quot;<span class="subst">$&#123;student[<span class="number">0</span>]?.name&#125;</span>： 老師好&quot;</span>)&#125;</span><br><span class="line">    student.speak(<span class="number">0</span>) &#123; println(<span class="string">&quot;<span class="subst">$&#123;student[<span class="number">1</span>]?.name&#125;</span>： 老師好&quot;</span>)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 建立一個使用泛型物件的類別</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>&lt;<span class="type">T</span>&gt;</span>(<span class="keyword">vararg</span> person: T) &#123;</span><br><span class="line">    <span class="comment">// 修改 data 資料型別為 Array&lt;out T&gt;， out 代表我們要將泛型 T 作為內部函數的返回值</span></span><br><span class="line">    <span class="keyword">var</span> <span class="keyword">data</span>: Array&lt;<span class="keyword">out</span> T&gt; = person</span><br><span class="line"></span><br><span class="line">    <span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="title">get</span><span class="params">(index: <span class="type">Int</span>)</span></span>: T? = <span class="keyword">data</span>[index]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="type">&lt;R&gt;</span> <span class="title">speak</span><span class="params">(index: <span class="type">Int</span>, func: (<span class="type">T</span>) -&gt; <span class="type">R</span>)</span></span>: R? &#123;</span><br><span class="line">        <span class="keyword">return</span> func(<span class="keyword">data</span>[index])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Teacher</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> employeeNumber: String)</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> studentID: String)</span><br></pre></td></tr></table></figure>
+
+<h2 id="in-amp-out"><a href="#in-amp-out" class="headerlink" title="in &amp; out"></a>in &amp; out</h2><p>在前一個範例中我們有用到 <code>out</code> 關鍵字，我們發現若在泛型類別中要將泛型用在內部函數的返回值上，必須加上 <code>out</code> 關鍵字，而 <code>out</code> 關鍵字其實有一個夥伴－ <code>in</code> 關鍵字，<code>in</code> 則是將泛型用在函數參數值上。</p>
+<p>而泛型參數其實扮演兩種角色：<code>生產者（producer）</code> 或 <code>消費者（consumer）</code>，若身為生產者時，只能讀不能寫；消費者則相反，不能讀只能寫，而生產者為 <code>out</code> 關鍵字，消費者則為 <code>in</code> 關鍵字。</p>
+<p>接下來，我們利用範例來觀察 <code>in</code> &amp; <code>out</code> 的實際狀況，首先介紹 <code>out</code> 關鍵字， <code>out</code> 泛型可以讓我們將子類別的泛型物件賦值給父類別泛型物件：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 正常情況</span></span><br><span class="line">    <span class="comment">// 食品商店屬於食品商店</span></span><br><span class="line">    <span class="keyword">val</span> producer1 : Production&lt;Food&gt; = FoodStore()</span><br><span class="line">    <span class="comment">// 速食商品屬於食品商店</span></span><br><span class="line">    <span class="keyword">val</span> producer2 : Production&lt;Food&gt; = FastFoodStore()</span><br><span class="line">    <span class="comment">// 漢堡商店也屬於食品商店</span></span><br><span class="line">    <span class="keyword">val</span> producer3 : Production&lt;Food&gt; = InOutBurger()</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 錯誤情況</span></span><br><span class="line">      <span class="comment">// 食品商店不見得屬於漢堡商店  </span></span><br><span class="line"><span class="comment">//    val producer1 : Production&lt;Burger&gt; = FoodStore()</span></span><br><span class="line">      <span class="comment">// 速食商店也不見得屬於漢堡商店</span></span><br><span class="line"><span class="comment">//    val producer2 : Production&lt;Burger&gt; = FastFoodStore()</span></span><br><span class="line">      <span class="comment">// 漢堡商店屬於漢堡商店</span></span><br><span class="line"><span class="comment">//    val producer3 : Production&lt;Burger&gt; = InOutBurger()</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Food</span></span></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">FastFood</span> : <span class="type">Food</span></span>()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Burger</span> : <span class="type">FastFood</span></span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定義一個生產者介面，運用 out 關鍵字</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Production</span>&lt;<span class="type">out T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 將泛型 T 作為回傳值</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">produce</span><span class="params">()</span></span>: T</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定義一個 FoodStore 類別，並利用 Food 類別實作生產者介面</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FoodStore</span> : <span class="type">Production</span>&lt;<span class="type">Food</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">produce</span><span class="params">()</span></span>: Food &#123;</span><br><span class="line">        println(<span class="string">&quot;食品商店&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> Food()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定義一個 FastFoodStore 類別，並利用 FastFood 類別實作生產者介面</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FastFoodStore</span> : <span class="type">Production</span>&lt;<span class="type">FastFood</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">produce</span><span class="params">()</span></span>: FastFood &#123;</span><br><span class="line">        println(<span class="string">&quot;速食商店&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> FastFood()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定義一個 FastFoodStore 類別，並利用 FastFood 類別實作生產者介面</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InOutBurger</span> : <span class="type">Production</span>&lt;<span class="type">Burger</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">produce</span><span class="params">()</span></span>: Burger &#123;</span><br><span class="line">        println(<span class="string">&quot;漢堡商店&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> Burger()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再來是 <code>in</code> 關鍵字的用法，<code>in</code> 泛型可以讓我們將父類別泛型物件賦值給子類別泛型物件，以下是範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 正常情況</span></span><br><span class="line">    <span class="comment">// 想購買肉品食物的消費者可能也會想買漢堡</span></span><br><span class="line">    <span class="keyword">val</span> consumer1 : Consumer&lt;Burger&gt; = PurchaseFood()</span><br><span class="line">    <span class="comment">// 想購買速食食物的消費者可能也會想買漢堡</span></span><br><span class="line">    <span class="keyword">val</span> consumer2 : Consumer&lt;Burger&gt; = EatFastFood()  </span><br><span class="line">    <span class="keyword">val</span> consumer3 : Consumer&lt;Burger&gt; = EatBurger()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 錯誤情況</span></span><br><span class="line"><span class="comment">//    val consumer1 : Consumer&lt;Food&gt; = PurchaseFood()</span></span><br><span class="line">      <span class="comment">// 直接想購買速食商品的消費者通常不會想買肉品</span></span><br><span class="line"><span class="comment">//    val consumer2 : Consumer&lt;Food&gt; = EatFastFood()</span></span><br><span class="line">      <span class="comment">// 直接想購買漢堡商品的消費者通常不見想買肉品</span></span><br><span class="line"><span class="comment">//    val consumer3 : Consumer&lt;Food&gt; = EatBurger()</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 利用 in 關鍵字配合泛型</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Consumer</span>&lt;<span class="type">in T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 將泛型 T 作為函數參數</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">consume</span><span class="params">(item: <span class="type">T</span>)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 想購買食品商品</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PurchaseFood</span> : <span class="type">Consumer</span>&lt;<span class="type">Food</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">consume</span><span class="params">(item: <span class="type">Food</span>)</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;購買食品商品&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 想購買速食食物</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EatFastFood</span> : <span class="type">Consumer</span>&lt;<span class="type">FastFood</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">consume</span><span class="params">(item: <span class="type">FastFood</span>)</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;購買速食食物&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 想購買漢堡食物</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EatBurger</span> : <span class="type">Consumer</span>&lt;<span class="type">Burger</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">consume</span><span class="params">(item: <span class="type">Burger</span>)</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;購買漢堡食物&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><p>【官方】<a target="_blank" rel="noopener" href="https://kotlinlang.org/">Kotlin 官方文件</a></p>
+</li>
+<li><p>【文章】<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32583310">Kotlin 泛型中的 in 和 out</a></p>
+</li>
+<li><p>【文章】<a target="_blank" rel="noopener" href="https://iter01.com/70458.html">深入理解 Java 泛型</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-09/" title="[Day 09] 遠征 Kotlin × 例外處理"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-11/" title="[Day 11] 遠征 Kotlin × 函數式程式設計"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-10/';
+        
+        this.page.identifier = 'ironman-2020-10';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

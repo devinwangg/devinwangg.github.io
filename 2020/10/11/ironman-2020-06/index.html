@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 06] 遠征 Kotlin × Collections 介紹 | Devin Blog</title>
+  <meta name="description" content="集合（Collections）是可以儲存一群相同型別資料的物件，Kotlin 集合類型主要有 List、Set、Map，又可再細分為可變（mutable ）集合與不可變（immutable）集合， Kotlin 官方這邊有提供一張 Collection 結構圖（參考 Kotlin 官方文件）：  我們可以從上圖觀察出 Collection 是集合結構的根節點 root，而 Collection 還">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 06] 遠征 Kotlin × Collections 介紹">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-06/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="集合（Collections）是可以儲存一群相同型別資料的物件，Kotlin 集合類型主要有 List、Set、Map，又可再細分為可變（mutable ）集合與不可變（immutable）集合， Kotlin 官方這邊有提供一張 Collection 結構圖（參考 Kotlin 官方文件）：  我們可以從上圖觀察出 Collection 是集合結構的根節點 root，而 Collection 還">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200915/20121179jcIlfB7fvR.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200915/20121179l4vP4g08Is.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200915/201211791zQUFsuHwr.png">
+<meta property="article:published_time" content="2020-10-11T11:27:51.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:27:51.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200915/20121179jcIlfB7fvR.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-06/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-06" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 06] 遠征 Kotlin × Collections 介紹
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-06/" class="article-date">
+	  <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-06/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>集合（Collections）是可以儲存一群相同型別資料的物件，Kotlin 集合類型主要有 <code>List</code>、<code>Set</code>、<code>Map</code>，又可再細分為<code>可變（mutable ）集合</code>與<code>不可變（immutable）集合</code>， Kotlin 官方這邊有提供一張 Collection 結構圖（<a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/reference/collections-overview.html">參考 Kotlin 官方文件</a>）：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200915/20121179jcIlfB7fvR.png" alt="https://ithelp.ithome.com.tw/upload/images/20200915/20121179jcIlfB7fvR.png"></p>
+<p>我們可以從上圖觀察出 Collection 是集合結構的根節點 <code>root</code>，而 Collection 還繼承了 <code>Iterable</code> interface<code>&lt;T&gt;</code>，其中 <code>Iterable</code>、<code>Collection</code>、<code>List</code>、<code>Set</code>與<code>Map</code> 都會再延伸出可變（Mutable）集合，清楚表達出集合成員們的關係。</p>
+<p>Collection 既然作為根節點，我們可以觀察它內部是如何定義，下圖會發現它的內部除了繼承 Iterable 以外，也包含了 <code>size</code>、<code>isEmpty</code>、<code>contains</code>與 <code>override iterator</code> 迭代元素的操作：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200915/20121179l4vP4g08Is.png" alt="https://ithelp.ithome.com.tw/upload/images/20200915/20121179l4vP4g08Is.png"></p>
+<p>我們利用一個範例進行測試，在下面範例中我們先定義一個 <code>List</code> 與一個 <code>Set</code> 的集合，再定義一個參數為 Collection 的函數，觀察兩者是否會印出一樣的值：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 定義一個 List 集合</span></span><br><span class="line">    <span class="keyword">val</span> stringList = listOf(<span class="string">&quot;one&quot;</span>, <span class="string">&quot;two&quot;</span>, <span class="string">&quot;three&quot;</span>)</span><br><span class="line">    printAll(stringList) <span class="comment">// 印出 one two three</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定義一個 Set 集合</span></span><br><span class="line">    <span class="keyword">val</span> stringSet = setOf(<span class="string">&quot;one&quot;</span>, <span class="string">&quot;two&quot;</span>, <span class="string">&quot;three&quot;</span>)</span><br><span class="line">    printAll(stringSet) <span class="comment">// 印出 one two three</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">printAll</span><span class="params">(strings: <span class="type">Collection</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span>(s <span class="keyword">in</span> strings) print(<span class="string">&quot;<span class="variable">$s</span> &quot;</span>)</span><br><span class="line">    println()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="集合類型"><a href="#集合類型" class="headerlink" title="集合類型"></a>集合類型</h2><ul>
+<li><p>List 是一個<code>有序</code>集合，可利用<code>索引</code>來存取項目（item）資料，同樣的項目數值在 list 中<strong>可重複出現多次</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> numbers = listOf(<span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">    <span class="comment">// 印出集合共有幾個元素</span></span><br><span class="line">    println(<span class="string">&quot;集合共有 <span class="subst">$&#123;numbers.size&#125;</span> 個元素&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 索引起始值為 0，故 get(2) 是取得第三個數值</span></span><br><span class="line">    println(<span class="string">&quot;第三個元素為 <span class="subst">$&#123;numbers.get(<span class="number">2</span>)&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 同上，索引起始值為 0，故 numbers[3] 是取得第四個數值</span></span><br><span class="line">    println(<span class="string">&quot;第四個元素為 <span class="subst">$&#123;numbers[<span class="number">3</span>]&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 數值 3 所在索引值為 2</span></span><br><span class="line">    println(<span class="string">&quot;利用數值找出所在的索引值 <span class="subst">$&#123;numbers.indexOf(<span class="number">3</span>)&#125;</span>&quot;</span>)  </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 此段程式會印出下列訊息：</span></span><br><span class="line">    <span class="comment">// 集合共有 4 個元素</span></span><br><span class="line">    <span class="comment">// 第三個元素為 3</span></span><br><span class="line">    <span class="comment">// 第四個元素為 4</span></span><br><span class="line">    <span class="comment">// 利用數值找出所在的索引值 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Set 是一個<code>無序</code>集合，與 List 最大差別在於 Set <strong>不可儲存重複數值項目</strong>，對於 Set 來說，元素的顺序並不重要</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> numbers = setOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 因 set 集合元素值不會重複，故 size 會為 3</span></span><br><span class="line">    println(<span class="string">&quot;集合共有 <span class="subst">$&#123;numbers.size&#125;</span> 個元素&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 回傳 true</span></span><br><span class="line">    println(<span class="string">&quot;集合是否存在 3 的元素 <span class="subst">$&#123;numbers.contains(<span class="number">3</span>)&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出下列訊息：</span></span><br><span class="line">    <span class="comment">// 集合共有 3 個元素</span></span><br><span class="line">    <span class="comment">// 集合是否存在 3 的元素 true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Map 是由<code>鍵值（Key）</code>與<code>數值（Value）</code>所組成的集合，Key <strong>必須符合唯一性</strong>，每個 Key 值都會搭配一個 Value</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> numbers = mapOf&lt;String, <span class="built_in">Int</span>&gt;(<span class="string">&quot;key1&quot;</span> to <span class="number">1</span>, <span class="string">&quot;key2&quot;</span> to <span class="number">4</span>, <span class="string">&quot;key3&quot;</span> to  <span class="number">3</span>, <span class="string">&quot;key4&quot;</span> to  <span class="number">4</span>)</span><br><span class="line">    println(<span class="string">&quot;集合共有 <span class="subst">$&#123;numbers.size&#125;</span> 個元素&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 檢查是否有該索引值，若存在則回傳 true</span></span><br><span class="line">    println(<span class="string">&quot;集合是否存在 key2 的索引值 <span class="subst">$&#123;<span class="string">&quot;key2&quot;</span> in numbers&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 檢查是否有該數值，若有則回傳 true</span></span><br><span class="line">    println(<span class="string">&quot;集合是否存在 4 的數值 <span class="subst">$&#123;numbers.containsValue(<span class="number">4</span>)&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出下列訊息：</span></span><br><span class="line">    <span class="comment">// 集合共有 4 個元素</span></span><br><span class="line">    <span class="comment">// 集合是否存在 key2 的索引值 true</span></span><br><span class="line">    <span class="comment">// 集合是否存在 4 的數值 true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="可變（mutable）與不可變（immutable）"><a href="#可變（mutable）與不可變（immutable）" class="headerlink" title="可變（mutable）與不可變（immutable）"></a>可變（mutable）與不可變（immutable）</h3><p>在文章開頭有提到， Kotlin 在集合這塊會再細分為<code>可變（mutable）集合</code>與<code>不可變（immutable）集合</code>，依照文章開頭的 Kotlin 官方集合結構圖會發現，所有的可變集合都是繼承自不可變的集合，兩者只差在可變集合可以<strong>改變原集合的元素數值、順序、數量</strong>等，而不可變集合只能對元素進行<strong>讀取和查詢</strong>，我們利用下面範例進行測試：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 定義一個不可變集合 List，將無法針對內容修改</span></span><br><span class="line">    <span class="keyword">val</span> list = listOf(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定義一個可變集合 mutableList，此集合可修改內容</span></span><br><span class="line">    <span class="keyword">val</span> mutableList = mutableListOf(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    list[<span class="number">0</span>] = <span class="number">1</span> <span class="comment">// 此行會出現編譯錯誤，錯誤訊息可參考下圖</span></span><br><span class="line">    mutableList[<span class="number">0</span>] = <span class="number">5</span>  <span class="comment">// 成功編譯</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>編譯錯誤可參考下圖訊息，會發現到 list 集合無法修改內容：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200915/201211791zQUFsuHwr.png" alt="https://ithelp.ithome.com.tw/upload/images/20200915/201211791zQUFsuHwr.png"></p>
+<h2 id="集合操作"><a href="#集合操作" class="headerlink" title="集合操作"></a>集合操作</h2><p>在實務開發中，我們經常會遇到產品的某個業務邏輯問題需要操作集合，此時就會需要了解集合的操作方式，像是如何建立一個空集合、如何加入元素到集合、如何進行集合複製、如何逐步印出集合內所有元素、如何在集合取得特定條件的元素等方法，我們利用一個範例進行深入探討：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立一個空集合 List</span></span><br><span class="line">    <span class="keyword">val</span> list: MutableList&lt;<span class="built_in">Int</span>&gt; = mutableListOf&lt;<span class="built_in">Int</span>&gt;()</span><br><span class="line">    list.add(<span class="number">1</span>) <span class="comment">// 加入元素 1</span></span><br><span class="line">    list.add(<span class="number">2</span>) <span class="comment">// 加入元素 2</span></span><br><span class="line">    list.add(<span class="number">3</span>) <span class="comment">// 加入元素 3</span></span><br><span class="line">    list.add(<span class="number">4</span>) <span class="comment">// 加入元素 4</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 此段會進行集合複製，利用 toMutableList() 方法</span></span><br><span class="line">    <span class="keyword">val</span> copyList = list.toMutableList()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 嘗試印出 copyList 共有幾個元素，此段會印出 「copyList 有 4 個元素」</span></span><br><span class="line">    println(<span class="string">&quot;copyList 有 <span class="subst">$&#123;copyList.size&#125;</span> 個元素&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 嘗試利用 forEach 方法逐步印出集合內元素，結果印出「1 2 3 4 」結果</span></span><br><span class="line">    copyList.forEach &#123; print(<span class="string">&quot;<span class="variable">$it</span> &quot;</span>) &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 嘗試利用 filter 方法加入偶數判斷條件，印出「2 4」結果</span></span><br><span class="line">    copyList.filter &#123; it % <span class="number">2</span> == <span class="number">0</span> &#125;.forEach &#123; print(<span class="string">&quot;<span class="variable">$it</span> &quot;</span>) &#125;</span><br><span class="line"></span><br><span class="line">    println(<span class="string">&quot;集合取值方法&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// slice 是利用區間索引值進行取值，此行會印出 [2, 3, 4]</span></span><br><span class="line">    println(copyList.slice(<span class="number">1</span>..<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment">// take 是取得0-2的元素，此行會印出 [1, 2]</span></span><br><span class="line">    println(copyList.take(<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment">// takeList 則是取得倒數0-2的元素，此行會印出 [3, 4]</span></span><br><span class="line">    println(copyList.takeLast(<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment">// drop 會回傳指定索引的後面全部元素，此行會印出 [3, 4]</span></span><br><span class="line">    println(copyList.drop(<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 此段會印出 copyList 共有 4 個元素</span></span><br><span class="line">    println(<span class="string">&quot;copyList 有 <span class="subst">$&#123;copyList.size&#125;</span> 個元素&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/reference/collections-overview.html">Kotlin 官方文件－Collection</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-05/" title="[Day 05] 遠征 Kotlin × 函數介紹"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-07/" title="[Day 07] 遠征 Kotlin × 類別與物件"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-06/';
+        
+        this.page.identifier = 'ironman-2020-06';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

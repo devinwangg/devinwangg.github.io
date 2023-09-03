@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 26] 遠征 Kotlin × Spring Boot 部署網站到 Heroku | Devin Blog</title>
+  <meta name="description" content="前面我們利用 Thymeleaf 樣板引擎結合 H2 資料庫實作 Todo 待辦事項清單，而既然我們完成了一個小作品，我們就來將作品發佈到網路上吧！這邊我們利用 Heroku 服務進行網站部署，而 Heroku 是一個平台即服務（PaaS），可以讓我們部署各種網站，減少維護管理系統底層的成本，類似的平台有 GCP、AWS、Azure、阿里雲等。 而 Heroku 在收費方面，以個人用途而言，提供每">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 26] 遠征 Kotlin × Spring Boot 部署網站到 Heroku">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-26/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="前面我們利用 Thymeleaf 樣板引擎結合 H2 資料庫實作 Todo 待辦事項清單，而既然我們完成了一個小作品，我們就來將作品發佈到網路上吧！這邊我們利用 Heroku 服務進行網站部署，而 Heroku 是一個平台即服務（PaaS），可以讓我們部署各種網站，減少維護管理系統底層的成本，類似的平台有 GCP、AWS、Azure、阿里雲等。 而 Heroku 在收費方面，以個人用途而言，提供每">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/201211797bqoICi9rs.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/20121179ptNuHVnbsN.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/2012117902LFzfH44p.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/201211791rgJIy7y97.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/201211790caKkg6kv3.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/20121179affKbaqZ0U.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/20121179yMy9ibHVX6.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/20121179xOsITrBrkw.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/20121179y1DQAL1vLv.png">
+<meta property="article:published_time" content="2020-10-11T11:10:06.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:10:06.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20201005/201211797bqoICi9rs.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-26/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-26" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 26] 遠征 Kotlin × Spring Boot 部署網站到 Heroku
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-26/" class="article-date">
+	  <time datetime="2020-10-11T11:10:06.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-26/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>前面我們利用 <code>Thymeleaf</code> 樣板引擎結合 <code>H2</code> 資料庫實作 Todo 待辦事項清單，而既然我們完成了一個小作品，我們就來將作品發佈到網路上吧！這邊我們利用 <code>Heroku</code> 服務進行網站部署，而 Heroku 是一個平台即服務（PaaS），可以讓我們部署各種網站，減少維護管理系統底層的成本，類似的平台有 GCP、AWS、Azure、阿里雲等。</p>
+<p>而 Heroku 在收費方面，以個人用途而言，提供每個帳戶每個月有 550 小時的免費額度（如下圖），若加入信用卡認證可以增加到 1000 小時的免費額度，也可以讓開發者客製化命名 Domains ，而在部署方面又非常快速簡單，非常適合開發者測試部署。<br>    <img src="https://ithelp.ithome.com.tw/upload/images/20201005/201211797bqoICi9rs.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/201211797bqoICi9rs.png"><br>圖片來源自<a target="_blank" rel="noopener" href="https://www.heroku.com/pricing">Heroku官方網站</a></p>
+<p><strong>接下來，我們實際介紹部署步驟：</strong></p>
+<ol>
+<li><p>專案部份我們直接利用昨日範例（<a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-thymeleaf-example">Github連結</a>）進行部署，也可以使用自己的專案進行部署</p>
+</li>
+<li><p>首先必須要先確保大家有 <code>Heroku 帳號</code>，可以利用此 Heroku 登入網頁（<a target="_blank" rel="noopener" href="https://id.heroku.com/login">https://id.heroku.com/login</a>）嘗試登入，<strong>若沒有帳號的朋友，請記得先註冊</strong><br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/20121179ptNuHVnbsN.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/20121179ptNuHVnbsN.png"></p>
+</li>
+<li><p>接下來需要下載 <code>Heroku CLI 開發工具</code>，下載方式可以進入<a target="_blank" rel="noopener" href="https://devcenter.heroku.com/articles/heroku-cli#download-and-install">HeroKu 下載頁面</a>，再根據對應的作業系統進行下載<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/2012117902LFzfH44p.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/2012117902LFzfH44p.png"></p>
+</li>
+<li><p>下載完畢後，打開<code>終端機（Terminal）</code>並<strong>切換終端機路徑到部署專案路徑下</strong>，再輸入 <code>heroku login</code>  進行 Heroku 登入，會需要輸入第二步驟登入或註冊的信箱與密碼</p>
+</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$</span> heroku login</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>接著在專案路徑底下輸入 <code>git 初始設定</code> 與 <code>heroku 發佈</code>，輸入如下：</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$</span> git init</span><br><span class="line"><span class="variable">$</span> git add .</span><br><span class="line"><span class="variable">$</span> git commit <span class="literal">-m</span> <span class="string">&quot;first commit&quot;</span></span><br><span class="line"><span class="variable">$</span> heroku create</span><br><span class="line"><span class="variable">$</span> git push heroku master</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>發佈完成後，我們會在終端機畫面上看到 <code>Build Success提示訊息</code> 與 <code>部署完成的網址</code> ，此時我們<strong>打開瀏覽器開啟網址</strong>就可以看到我們部署的專案成果<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/201211791rgJIy7y97.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/201211791rgJIy7y97.png"><br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/201211790caKkg6kv3.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/201211790caKkg6kv3.png"></p>
+</li>
+<li><p>接著我們可以到 <code>Heroku</code> 的 <a target="_blank" rel="noopener" href="https://dashboard.heroku.com/apps">Dashboard 管理頁面</a>，會發現到我們剛上傳的應用程式（immense-mesa-06828）<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/20121179affKbaqZ0U.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/20121179affKbaqZ0U.png"></p>
+</li>
+<li><p>而應用程式名稱是 Heroku 幫我們自動命名，若大家想要重新命名，可以<strong>點擊該應用程式進入頁面</strong>，再點擊 <code>Settings</code> 頁面，直接在 <code>App Name</code> 欄位進行名稱設定即可， <strong>Domains 網址也會自動更新</strong> ，如下圖：<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/20121179yMy9ibHVX6.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/20121179yMy9ibHVX6.png"><br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/20121179xOsITrBrkw.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/20121179xOsITrBrkw.png"></p>
+</li>
+<li><p>我們打開瀏覽器瀏覽（ <a target="_blank" rel="noopener" href="https://ithome-2020.herokuapp.com/todos">https://ithome-2020.herokuapp.com/todos</a> ） 會發現網站已經成功修改為我們客製化命名的 Domain<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201005/20121179y1DQAL1vLv.png" alt="https://ithelp.ithome.com.tw/upload/images/20201005/20121179y1DQAL1vLv.png"></p>
+</li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[官方] <a target="_blank" rel="noopener" href="https://devcenter.heroku.com/">Heroku 網站</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-25/" title="[Day 25] 遠征 Kotlin × Spring Boot 介紹 Template Engine (2)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-27/" title="[Day 27] 遠征 Kotlin × Spring Boot 介紹 Spring AOP 機制"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-26/';
+        
+        this.page.identifier = 'ironman-2020-26';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

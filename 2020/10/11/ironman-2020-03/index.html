@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 03] 遠征 Kotlin × 變數型別 | Devin Blog</title>
+  <meta name="description" content="在任何一種程式語言都有資料型別介紹，而此篇我們將來了解 Kotlin 在資料型別上的特性、操作、轉換等內容。 在 Kotlin 官方文件中有提到：  In Kotlin, everything is an object in the sense that we can call member functions and properties on any variable.  上述內容得知，Kot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 03] 遠征 Kotlin × 變數型別">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-03/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="在任何一種程式語言都有資料型別介紹，而此篇我們將來了解 Kotlin 在資料型別上的特性、操作、轉換等內容。 在 Kotlin 官方文件中有提到：  In Kotlin, everything is an object in the sense that we can call member functions and properties on any variable.  上述內容得知，Kot">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200912/20121179s0fDvpLeBE.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200912/20121179ihruzGQCee.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200912/20121179hI5ojOeMew.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200912/20121179oKLvyrROGy.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200912/20121179O9kWjS1nt1.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200912/20121179AFv0fulGrw.png">
+<meta property="article:published_time" content="2020-10-11T11:30:04.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:30:04.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200912/20121179s0fDvpLeBE.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-03/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-03" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 03] 遠征 Kotlin × 變數型別
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-03/" class="article-date">
+	  <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-03/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>在任何一種程式語言都有資料型別介紹，而此篇我們將來了解 Kotlin 在資料型別上的特性、操作、轉換等內容。</p>
+<p>在 Kotlin 官方文件中有提到：</p>
+<blockquote>
+<p>In Kotlin, everything is an object in the sense that we can call member functions and properties on any variable.</p>
+</blockquote>
+<p>上述內容得知，Kotlin 的任何東西都是一個物件，可以存取任何對象的相關方法與屬性，不像 Java 有區分<code>原始型別（Primitive Type）</code>與<code>參考型態（Reference Types）</code>，在開發上有時候甚至需要做轉換才可使用。而 Kotlin 在宣告變數時使用的是<code>靜態類型系統（static type system）</code>，即編輯器會按照變數類型辨識程式碼，判斷是否有存在類型與數值不符合的狀況發生，若有出現，編輯器會立即指出，例如下圖提示訊息：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200912/20121179s0fDvpLeBE.png" alt="https://ithelp.ithome.com.tw/upload/images/20200912/20121179s0fDvpLeBE.png"></p>
+<h2 id="變數宣告"><a href="#變數宣告" class="headerlink" title="變數宣告"></a>變數宣告</h2><p>Kotlin 在變數宣告時主要會使用到兩種關鍵字 <code>val</code> 和 <code>var</code> ：</p>
+<ul>
+<li><code>val</code> 用於唯讀變數，一旦給值就無法再修改</li>
+<li><code>var</code> 用於需要重新修改數值的情況</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> readOnlyVariable = <span class="string">&quot;鐵人賽第十二屆&quot;</span> <span class="comment">// 宣告一個唯讀變數</span></span><br><span class="line">    <span class="keyword">var</span> playerName = <span class="string">&quot;選手一號&quot;</span> <span class="comment">// 宣告一個可重新修改數值的變數</span></span><br><span class="line">    playerName = <span class="string">&quot;選手二號&quot;</span> <span class="comment">// 重新賦予新數值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Kotlin 官方這邊也有建議開發者在開發上建議優先使用 <code>val</code>，當遇到需要修改數值時再轉為 <code>var</code> 即可，若使用 <code>var</code> 宣告變數，開發者若沒有在程式中修改過，Intellij 編輯器也會提示建議改為 <code>val</code>，如下圖：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200912/20121179ihruzGQCee.png" alt="https://ithelp.ithome.com.tw/upload/images/20200912/20121179ihruzGQCee.png"></p>
+<h2 id="空值型態"><a href="#空值型態" class="headerlink" title="空值型態"></a>空值型態</h2><p>還記得嗎？我們在上一章有提到 Kotlin 有一個優勢是可以避免以前 Java 開發中常見的 <code>NullPointerException</code> 情況發生，主要原因是因為 Kotlin 預設宣告都只能是非 <code>null</code> 型態，例如以下範例，當我們想要進行指派 <code>null</code> 值給 String 時會發生編譯錯誤狀況：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200912/20121179hI5ojOeMew.png" alt="https://ithelp.ithome.com.tw/upload/images/20200912/20121179hI5ojOeMew.png"></p>
+<p>這樣的錯誤檢查就能夠避免開發者經常會有出現錯誤的問題，而如果在開發情境上確實有必要使用 <code>null</code> 值，則可以將變數定義為 <code>nullable</code> 狀態，即在變數的型態定義上加上 <code>?</code> 即可，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> test: String? = <span class="string">&quot;鐵人賽&quot;</span></span><br><span class="line">    test = <span class="literal">null</span></span><br><span class="line">    println(test) <span class="comment">// 印出 null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="型別判斷處理"><a href="#型別判斷處理" class="headerlink" title="型別判斷處理"></a>型別判斷處理</h2><p>在介紹基本型別前，先介紹 Kotlin 在變數上有個特色是型別判斷處理，可對於已指派預設值的宣告變數自動定義型別，允許開發者省略型別定義，以下我們嘗試宣告一個變數，並輸出該變數的型別來看 Kotlin 是否有自動幫我們進行型別宣告，如下範例：</p>
+<p>此範例先宣告變數 name 為「鐵人賽」，再利用「::class.simpleName」印出變數型別結果為 String</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> name = <span class="string">&quot;鐵人賽&quot;</span></span><br><span class="line">    println(name::<span class="keyword">class</span>.simpleName) <span class="comment">// 印出 String -&gt; 代表 Kotlin 自動幫我們定義型態</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="資料型別"><a href="#資料型別" class="headerlink" title="資料型別"></a>資料型別</h2><p>Kotlin 在資料型別與 Java 非常相似，只差在變數型態必須使用<code>首字大寫</code>，型別分別如下：</p>
+<ul>
+<li><p>數值型別 Numbers （種類可依長度區分）</p>
+<ul>
+<li><p>Byte (8 Bits)</p>
+</li>
+<li><p>Short (16 Bits)</p>
+</li>
+<li><p>Int (32 Bits)</p>
+</li>
+<li><p>Long (64 Bits)</p>
+</li>
+<li><p>Float (32 Bits)</p>
+</li>
+<li><p>Double (64 Bits)</p>
+<p>數值變數在操作上可直接宣告型態或是透過型別判斷進行操作：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> byte: <span class="built_in">Byte</span> = <span class="number">1</span></span><br><span class="line">    <span class="keyword">val</span> short: <span class="built_in">Short</span> = <span class="number">2</span></span><br><span class="line">    <span class="keyword">val</span> int: <span class="built_in">Int</span> = <span class="number">3</span></span><br><span class="line">    <span class="keyword">val</span> long: <span class="built_in">Long</span> = <span class="number">4L</span></span><br><span class="line">    <span class="keyword">val</span> float: <span class="built_in">Float</span> = <span class="number">5f</span></span><br><span class="line">    <span class="keyword">val</span> double: <span class="built_in">Double</span> = <span class="number">6.0</span></span><br><span class="line"></span><br><span class="line">    println(<span class="string">&quot;Byte =&gt; <span class="variable">$byte</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;Short =&gt; <span class="variable">$short</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;Int =&gt; <span class="variable">$int</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;Long =&gt; <span class="variable">$long</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;Float =&gt; <span class="variable">$float</span>&quot;</span>)</span><br><span class="line">    println(<span class="string">&quot;Double =&gt; <span class="variable">$double</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>前面有提到 Kotlin 的一切都是物件，在以前 Java 變數型態有分為<code>基本型別（Primitive type）</code>與<code>參考型別（Reference type）</code>，即 <code>int</code> 與 <code>Integer</code> 的差別，而在 <code>J2SE 5.0</code> 時有提供<code>自動裝箱（autoboxing）</code>與<code>拆箱（unboxing）</code>來進行包裹基本型態，但在 Kotlin 中，只存在數值的裝箱，不存在拆箱，因為 Kotlin 是沒有存在基本資料型態的，下面將示範如何進行裝箱操作：</p>
+<p>此範例操作須搭配上面提到的概念－空值型態達成裝箱效果，會發現裝箱前與裝箱後的數值都一樣</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> number: <span class="built_in">Int</span> = <span class="number">913</span></span><br><span class="line">    <span class="keyword">val</span> numberInBox: <span class="built_in">Int</span>? = number</span><br><span class="line">    println(<span class="string">&quot;裝箱前數值： <span class="variable">$number</span> , 裝箱後數值： <span class="variable">$numberInBox</span>&quot;</span>)</span><br><span class="line">    <span class="comment">// 裝箱前數值： 913 , 裝箱後數值： 913</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面範例我們會發現兩個數值印出來雖然是相等的，但其實在 Kotlin 判斷數值是否相等有兩種比較方式（<code>==</code> 與 <code>===</code>），<code>==</code> 是判斷數值是否相等， <code>===</code> 則是判斷兩個數值在記憶體位置是否相等，而其實 Kotlin 在變數裝箱操作時，記憶體位置會根據其資料型別的數值範圍進行定義，我們可以利用下面範例進行示範：</p>
+<p>我們會發現當 a 變數為 127 時，判斷兩個裝箱變數會為 <code>true</code>，因為 Int 型態定義數值範圍為 <code>-128 ~ 127</code>，當 b 變數超過 127 數值時，Kotlin 在記憶體分配上會有不同位置狀況發生。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> a: <span class="built_in">Int</span> = <span class="number">127</span></span><br><span class="line">    <span class="keyword">val</span> boxedA: <span class="built_in">Int</span>? = a</span><br><span class="line">    <span class="keyword">val</span> anotherBoxedA: <span class="built_in">Int</span>? = a</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> b: <span class="built_in">Int</span> = <span class="number">128</span></span><br><span class="line">    <span class="keyword">val</span> boxedB: <span class="built_in">Int</span>? = b</span><br><span class="line">    <span class="keyword">val</span> anotherBoxedB: <span class="built_in">Int</span>? = b</span><br><span class="line"></span><br><span class="line">    println(boxedA === anotherBoxedA) <span class="comment">// true</span></span><br><span class="line">    println(boxedB === anotherBoxedB) <span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Kotlin 在數值轉換上有分顯性轉換與隱性轉換，隱性轉換即 Kotlin 會自動幫我們進行轉換，但若兩個數值為不同型態時，會自動以定義數值範圍較大的型態為轉換後的最終型態，例如以下範例：</p>
+<p>此範例為兩數相加，999為 <code>Long</code> 型態，1為 <code>Int</code> 型態，兩數相加後的結果 number 為 <code>Long</code> 型態</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> number = <span class="number">999L</span> + <span class="number">1</span></span><br><span class="line">    println(number::<span class="keyword">class</span>.simpleName) <span class="comment">// 印出資料型別為 Long</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而為了避免隱性轉換時自動選擇型態問題，我們在開發上可使用顯性轉換方式，即下面範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> number: <span class="built_in">Int</span> = <span class="number">65</span></span><br><span class="line">    println(number.toByte())    <span class="comment">// 印出 65</span></span><br><span class="line">    println(number.toShort())   <span class="comment">// 印出 65</span></span><br><span class="line">    println(number.toLong())    <span class="comment">// 印出 65</span></span><br><span class="line">    println(number.toFloat())   <span class="comment">// 印出 65.0</span></span><br><span class="line">    println(number.toDouble())  <span class="comment">// 印出 65.0</span></span><br><span class="line">    println(number.toChar())    <span class="comment">// 印出 A</span></span><br><span class="line">    println(number.toString())  <span class="comment">// 印出 65</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>字元型別 Char</p>
+<p>  Char 表示字元類型，字元變數必須使用單引號（‘’）表示，在轉換上可利用顯性轉換為數字型態，如以下範例：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> char: <span class="built_in">Char</span> = <span class="string">&#x27;A&#x27;</span></span><br><span class="line">    println(char.toInt())    <span class="comment">// 印出 65</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>字串型別 String</p>
+<p>  String 表示字串類型，在輸出時可使用字串模板表示式處理字串組成，再進行輸出，如下範例：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> username: String = <span class="string">&quot;Devin&quot;</span></span><br><span class="line">    println(<span class="string">&quot;第十二屆鐵人賽 參加者 <span class="variable">$username</span>&quot;</span>) <span class="comment">// 印出「第十二屆鐵人賽 參加者 Devin」</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>布林型別 Boolean</p>
+<p>  Boolean 表示為布林類型，其值有 <code>true</code> 與 <code>false</code></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> isFalse: <span class="built_in">Boolean</span> = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">val</span> isTrue: <span class="built_in">Boolean</span> = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    println(isFalse &amp;&amp; isTrue) <span class="comment">// 印出「false」</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>陣列型別 Array<code>&lt;T&gt;</code></p>
+<p>  Kotlin 的 Array 型別在宣告上是以 <code>Array&lt;T&gt;</code> 表示，我們可以到 Kotlin 的 <code>Array</code> 型態定義查看，會發現原始型態已經幫我們定義 get、set、size 與 iterator 方法：</p>
+<p>  <img src="https://ithelp.ithome.com.tw/upload/images/20200912/20121179oKLvyrROGy.png" alt="https://ithelp.ithome.com.tw/upload/images/20200912/20121179oKLvyrROGy.png"></p>
+<p>  故我們在 Array 操作上可以如下範例進行操作：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span>: Array&lt;<span class="built_in">Int</span>&gt; = arrayOf(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>) <span class="comment">// 宣告Array並賦予 1-5 數值</span></span><br><span class="line">    <span class="keyword">data</span>.forEach &#123; println(it) &#125;  <span class="comment">// 利用 forEach 分別印出數值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="Const-作用"><a href="#Const-作用" class="headerlink" title="Const 作用"></a>Const 作用</h2><p>在前述有提到唯讀變數 <code>val</code> 不允許重新設定數值，但其實 <code>val</code> 是在程式執行階段（Run time）才進行<code>賦值（Assign Value）</code>動作，而我們若要限制程式在編輯階段（Compile time）就進行賦值動作，應使用 <code>const</code> 關鍵字搭配 <code>val</code> 進行變數宣告，我們可用一個範例來說明 <code>const</code> 與 <code>val</code> 的差異：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200912/20121179O9kWjS1nt1.png" alt="https://ithelp.ithome.com.tw/upload/images/20200912/20121179O9kWjS1nt1.png"></p>
+<p>透過上面範例我們會發現兩件事：</p>
+<ol>
+<li><code>normalVariable</code> 可利用 getRandomValue() 隨機取得 1 - 6 數值，表示程式是先在執行階段利用 getRandomValue() 方法取得數值後，才對 <code>normalVariable</code> 進行賦值</li>
+<li>當我們嘗試將 <code>constVariableFromGetValue</code> 賦予 getRandomValue 方法時，會出現 const val 只能接受常數（constant value）</li>
+</ol>
+<h2 id="型別檢測與轉換"><a href="#型別檢測與轉換" class="headerlink" title="型別檢測與轉換"></a>型別檢測與轉換</h2><ul>
+<li><p>is 運算子</p>
+<p>  is運算子可檢查物件或變數是否屬於某資料型別，如Int、String等，類似於Java的 instanceof</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">    println(<span class="keyword">data</span> <span class="keyword">is</span> String);   <span class="comment">// 印出 true</span></span><br><span class="line">    println(<span class="keyword">data</span> <span class="keyword">is</span> Any);      <span class="comment">// 印出 true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>as 運算子進行型別轉換</p>
+<p>  as運算子用於型別轉換，若要轉換的數值與指定型別相容，轉換就會成功；如果型別不相容，使用 as? 運算子就會返回值null，如下範例：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> x: <span class="built_in">Int</span> = <span class="number">2</span></span><br><span class="line">    <span class="keyword">val</span> y: <span class="built_in">Int</span> = x <span class="keyword">as</span> <span class="built_in">Int</span></span><br><span class="line">    <span class="keyword">val</span> z: String? = y <span class="keyword">as</span>? String</span><br><span class="line"></span><br><span class="line">    println(y) <span class="comment">// 印出 2</span></span><br><span class="line">    println(z) <span class="comment">// 印出 null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="特殊型別"><a href="#特殊型別" class="headerlink" title="特殊型別"></a>特殊型別</h2><p>除了上述基本型別以外，Kotlin 還有一些特殊型別運用於物件或函數上，這邊會先進行簡單介紹，會在後續章節介紹時會再深入說明：</p>
+<h3 id="1-Any-型別"><a href="#1-Any-型別" class="headerlink" title="1. Any 型別"></a>1. Any 型別</h3><p>根據 Kotlin 官方文件所述：</p>
+<blockquote>
+<p>The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.</p>
+</blockquote>
+<p>在此篇文章一開始介紹說明，Kotlin的一切都是物件，而每個物件其實都是繼承 Any 這個型別，此型別相當於Java的 Object 型別，而此型別也可再細分為 Any 與 Any?，Any屬於非空型別的根物件，Any?屬於可空型別的根物件。</p>
+<h3 id="2-Unit-型別"><a href="#2-Unit-型別" class="headerlink" title="2. Unit 型別"></a>2. Unit 型別</h3><p>在 Java 中，當我們所設計的 function 不需回傳值時，我們會使用到 void 型別，而在 Kotlin 可使用 Unit 型別代替，而且若我們不特地為 function 設定回傳型態時，Kotlin 會自動幫我們預設型態為 Unit 型別，會返回 Unit 型別，例如以下範例。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> username = getUserName()</span><br><span class="line">    println(username::<span class="keyword">class</span>.simpleName) <span class="comment">// 印出 Unit 型別</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getUserName</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Nothing-型別"><a href="#3-Nothing-型別" class="headerlink" title="3. Nothing 型別"></a>3. Nothing 型別</h3><p>Nothing 型別其實類似於 Unit，Nothing 型別也是不返回任何東西，但差別在於 Nothing 型別意味著此函數不可能成功執行完成，只會拋出異常或是再也回不去函數呼叫的地方。</p>
+<p>而 Nothing? 型別則會有一個使用情境，在 Java 中，void不能是變數的型別。也不能被當數值列印輸出。但是，在Java中有個包裝類Void是 void 的自動裝箱型別，如果我們想讓 function 返回型別永遠是 null 的話，可以把返回型別置為這個大寫的V的Void型別，而 Void 即對應 Kotlin 中的 Nothing? 型別。</p>
+<p>範例(1) 使用 Nothing 型別</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    getUserName() <span class="comment">// 使用 Nothing 型別</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getUserName</span><span class="params">()</span></span>: <span class="built_in">Nothing</span> &#123;</span><br><span class="line">    <span class="keyword">throw</span> NotImplementedError() <span class="comment">// 丟出異常</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>範例(2) 使用 Nothing? 型別</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    getUserName() <span class="comment">// 使用 Nothing? 型別</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getUserName</span><span class="params">()</span></span>: <span class="built_in">Nothing</span>? &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span> <span class="comment">// 保持回傳 null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Kotlin-轉換-Java-Code"><a href="#Kotlin-轉換-Java-Code" class="headerlink" title="Kotlin 轉換 Java Code"></a>Kotlin 轉換 Java Code</h2><p>有時候我們可能會好奇在 Kotlin 所撰寫的程式，實際轉換為 Java 會是怎麼樣的語法，此時我們可以利用 intellij 內建的工具進行轉換觀察。</p>
+<p>在 Intellij 連續按 Shift 鍵兩次，搜尋「show kotlin」關鍵字，選擇「Show Kotlin Bytecode」，會出現Kotlin位元組碼工具視窗，再點擊「Decompile」按鈕即可觀看轉譯的Java 程式碼。</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200912/20121179AFv0fulGrw.png" alt="https://ithelp.ithome.com.tw/upload/images/20200912/20121179AFv0fulGrw.png"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[官方] <a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/tutorials/kotlin-for-py/introduction.html">Kotlin 官方文件</a></li>
+<li>[網站] <a target="_blank" rel="noopener" href="http://blog.tonycube.com/2020/07/kotlin-by-example-2-basic-variable-types.html">Kotlin 實戰範例</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-04/" title="[Day 04] 遠征 Kotlin × 流程控制"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-03/';
+        
+        this.page.identifier = 'ironman-2020-03';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

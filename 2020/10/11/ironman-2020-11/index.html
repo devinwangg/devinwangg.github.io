@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 11] 遠征 Kotlin × 函數式程式設計 | Devin Blog</title>
+  <meta name="description" content="函數式程式設計特性我們在前面函數章節有提到 Lambda 的基本概念，而如果我們想要更好運用 Lambda 語法與相關函數API，可以先認識函數程式設計（Functional Programming, 簡稱 FP）會有非常大幫助，FP 是一種程式設計方法，與前面章節提到的物件導向程式設計（Object-Oriented Programming）是不同的設計概念，兩種設計的思考方式有許多不同，FP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 11] 遠征 Kotlin × 函數式程式設計">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-11/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="函數式程式設計特性我們在前面函數章節有提到 Lambda 的基本概念，而如果我們想要更好運用 Lambda 語法與相關函數API，可以先認識函數程式設計（Functional Programming, 簡稱 FP）會有非常大幫助，FP 是一種程式設計方法，與前面章節提到的物件導向程式設計（Object-Oriented Programming）是不同的設計概念，兩種設計的思考方式有許多不同，FP">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-11T11:20:26.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:20:26.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-11/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-11" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 11] 遠征 Kotlin × 函數式程式設計
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-11/" class="article-date">
+	  <time datetime="2020-10-11T11:20:26.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-11/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="函數式程式設計特性"><a href="#函數式程式設計特性" class="headerlink" title="函數式程式設計特性"></a>函數式程式設計特性</h2><p>我們在前面<a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/articles/10236676">函數章節</a>有提到 <code>Lambda</code> 的基本概念，而如果我們想要更好運用 <code>Lambda</code> 語法與相關函數API，可以先認識<code>函數程式設計</code>（Functional Programming, 簡稱 FP）會有非常大幫助，FP 是一種程式設計方法，與前面章節提到的物件導向程式設計（Object-Oriented Programming）是不同的設計概念，兩種設計的思考方式有許多不同，FP 主要會有以下特性：</p>
+<ul>
+<li>會依賴於前面<a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/articles/10236676">函數章節</a>提到的<code>高階函數（Higher-Order Functions）</code>所傳回的結果，所謂<code>高階函數</code>即為<strong>利用函數作為參數或返回值的方法</strong></li>
+<li>函數必須符合<code>第一類物件（First-Class-Object）</code>原則</li>
+<li>保持<code>純函數（Pure functions）</code>特性，即函數在執行時，不會有任何<code>副作用（Side Effect）</code>的狀況，無副作用是指<strong>函數內部不會影響到函數外部的任何狀態</strong></li>
+<li>保持 <code>immutable</code> 特性，即<strong>資料一經賦值後就不能被修改</strong>，重視函數回傳結果（Output），不修改傳入的參數狀態（Input）</li>
+</ul>
+<h2 id="函數類別"><a href="#函數類別" class="headerlink" title="函數類別"></a>函數類別</h2><p>一般我們在使用 FP 設計方法時，通常會由三種函數所構成－<code>轉換（Transform）</code>、<code>過濾（Filter）</code>與<code>合併（Combine）</code>，每種函數目標都是為了取得最終結果進行設計，而函數彼此間可以互相配合使用，代表我們可以利用這樣的特性關係，將多個函數進行組合，處理複雜的計算行為。</p>
+<p><code>轉換（Transform）</code>是指我們會將輸入（Input）參數<strong>利用轉換器進行特定條件處理</strong>，再回傳處理的新結果，在 Kotlin 中常使用的轉換函數為 <code>map</code> 和 <code>flatMap</code>，可參考以下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span> = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">data</span>.map &#123; it * <span class="number">2</span>&#125;</span><br><span class="line">    println(result)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出 [2, 4, 6]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>過濾（Filter）</code>則是<strong>具有過濾符合特定條件的作用</strong>，一般會配合<code>條件運算式</code>（predicate）函數，利用此函數判斷傳入參數是否符合條件判斷，依照判斷結果回傳 true 或 false，若為 true，則將元素加入返回的新集合內，我們可以運用 <code>filter</code> 函數進行過濾處理，可參考以下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 建立原始資料</span></span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span> = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    <span class="comment">// 進行過濾的結果資料</span></span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">data</span>.filter &#123; it &gt; <span class="number">1</span> &#125;</span><br><span class="line">                     .map &#123; it * <span class="number">2</span>&#125;</span><br><span class="line">    println(result)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出 [4, 6]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>合併（Combine）</code>是<strong>將不同資料或不同集合組合成一個新集合</strong>，我們可以運用 <code>zip</code> 合併函數進行合併處理，可參考以下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 建立員工資料</span></span><br><span class="line">    <span class="keyword">val</span> personData = listOf&lt;String&gt;(<span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;Eric&quot;</span>, <span class="string">&quot;Mary&quot;</span>)</span><br><span class="line">    <span class="comment">// 建立薪資資料</span></span><br><span class="line">    <span class="keyword">val</span> salaryData = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1300</span>, <span class="number">1500</span>, <span class="number">1200</span>).map &#123; it * <span class="number">5</span> &#125;</span><br><span class="line">    <span class="comment">// 組合員工與薪資資料</span></span><br><span class="line">    <span class="keyword">val</span> result = personData.zip(salaryData).toMap()</span><br><span class="line">    <span class="comment">// 印出員工對應的薪水資料</span></span><br><span class="line">    println(result[<span class="string">&quot;Devin&quot;</span>])</span><br><span class="line">    println(result[<span class="string">&quot;Eric&quot;</span>])</span><br><span class="line">    println(result[<span class="string">&quot;Mary&quot;</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出 6500, 7500, 6000</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="標準函數"><a href="#標準函數" class="headerlink" title="標準函數"></a>標準函數</h2><p>在 Kotlin 標準函式庫中有提供一些支援 lambda 的標準函數－<code>Scope Function</code>，如 <code>apply</code>、<code>let</code>、<code>run</code>、<code>also</code>、<code>takeIf</code>等五種常用函數，若能<strong>善用這些函數進行開發，會讓我們的程式增加可讀性</strong>，以下分別進行介紹：</p>
+<ul>
+<li><p>apply</p>
+<p> <code>apply</code> 函數可視為配置函數，將需要設定的接收者傳入，再針對需求進行函數設定，例如以下範例：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 使用 apply 函數，可更直觀的方式進行設定</span></span><br><span class="line">    <span class="keyword">val</span> fileUsingApply = File(<span class="string">&quot;data.txt&quot;</span>).apply &#123;</span><br><span class="line">        setReadable(<span class="literal">true</span>)</span><br><span class="line">        setWritable(<span class="literal">true</span>)</span><br><span class="line">        setExecutable(<span class="literal">false</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>let</p>
+<p>  <code>let</code> 函數可以產生一個暫時變數（預設為 it）作用於 lambda 運算式，<code>let</code> 只會將最後一行作為返回值（lambda 結果值）進行回傳，例如以下範例</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 建立一個數值集合</span></span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span>: List&lt;<span class="built_in">Int</span>&gt; = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)</span><br><span class="line">    <span class="comment">// 取得集合第一個資料並使用 let 函數進行相乘</span></span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">data</span>.first().let &#123; it * it  &#125;</span><br><span class="line">    println(result)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出結果為 16</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>run</p>
+<p>  <code>run</code> 函數與 <code>apply</code> 函數相似，差別在於 <code>run</code> 函數不會返回接收者，返回的是一個 Lambda 結果，例如以下範例：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span>: List&lt;<span class="built_in">Int</span>&gt; = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)</span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">data</span>.first()  <span class="comment">// 取得集合第一個資料</span></span><br><span class="line">                     .let &#123; it * it  &#125;    <span class="comment">// 利用 let 函數進行相乘</span></span><br><span class="line">                     .run &#123; <span class="keyword">this</span> == <span class="number">16</span> &#125;  <span class="comment">// 利用 run 函數判斷結果值是否等於 16</span></span><br><span class="line">    println(result)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出結果為 true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>also</p>
+<p>  <code>also</code> 函數與 <code>let</code> 函數相似，差別在於 <code>also</code> 函數返回的是接收者，而 <code>let</code> 函數返回的是 Lambda 結果，參考以下範例：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span>: List&lt;<span class="built_in">Int</span>&gt; = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)</span><br><span class="line">    <span class="comment">// 取得集合第一個資料並使用 also 函數進行內部計算</span></span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">data</span></span><br><span class="line">                .first()</span><br><span class="line">                .also &#123;</span><br><span class="line">                    <span class="keyword">val</span> calculateResult = it * it</span><br><span class="line">                    println(<span class="string">&quot;相乘計算結果 <span class="variable">$calculateResult</span>&quot;</span>)</span><br><span class="line">                &#125;</span><br><span class="line">    println(<span class="string">&quot;返回結果：<span class="variable">$result</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出結果為</span></span><br><span class="line">    <span class="comment">// 相乘計算結果 16</span></span><br><span class="line">    <span class="comment">// 返回結果 4  -&gt; 代表 also 是回傳原接收者物件</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>takeIf</p>
+<p>  <code>takeIf</code> 與前面介紹的函數有些不同，<code>takeIf</code> 函數必須與 Lambda 提供的<code>條件運算式</code>（predicate）函數進行搭配使用，如果條件運算式成立結果為 true，則 <code>takeIf</code> 函數則會回傳原接收者物件，反之，若為 false，就會回傳 null，可參考以下範例：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span>: List&lt;<span class="built_in">Int</span>&gt; = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">data</span>.first()   <span class="comment">// 取得集合第一個資料</span></span><br><span class="line">            .run &#123; <span class="keyword">this</span> + <span class="number">4</span> &#125;   <span class="comment">// 利用 run 函數進行數值加 4，</span></span><br><span class="line">            .takeIf &#123; it == <span class="number">8</span> &#125; <span class="comment">// 利用 takeIf 函數搭配判斷運算式，若數值符合則回傳計算值，不符合則回傳 null</span></span><br><span class="line">    println(<span class="string">&quot;返回結果 <span class="variable">$result</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出「返回結果 8」</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><p>在這篇提到函數程式設計的基本概念、三種函數設計與 Lambda 相關函數介紹，後續也會逐漸在 Spring Boot 章節進一步介紹實際運用。這邊也希望大家能夠理解函數程式設計只是一種設計方法，而既然是設計方法，就不會有所謂的好壞之分，只有應用場景是否適合的差別，而 Kotlin 可支援多種程式設計方法，有時候我們也會混用物件導向程式設計與函數式程式設計解決手上的專案需求。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[官方] <a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/reference/scope-functions.html">Kotlin 官方文件</a></li>
+<li>[文章] <a target="_blank" rel="noopener" href="https://julianchu.net/2018/05/05-kotlin.html">Kotlin 的 scope function：Kotlin 的 scope function: apply, let, run..等等</a></li>
+<li>[書籍] <a target="_blank" rel="noopener" href="https://www.amazon.com/Kotlin-Programming-Nerd-Ranch-Guide/dp/0135161630">Kotlin Programming: The Big Nerd Ranch Guide</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-10/" title="[Day 10] 遠征 Kotlin × 泛型 Generic"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-12/" title="[Day 12] 遠征 Kotlin × 進入 Spring Boot 世界"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-11/';
+        
+        this.page.identifier = 'ironman-2020-11';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

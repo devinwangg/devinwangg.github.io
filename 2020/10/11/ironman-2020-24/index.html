@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 24] 遠征 Kotlin × Spring Boot 介紹 Template Engine (1) | Devin Blog</title>
+  <meta name="description" content="Thymeleaf 是什麼Thymeleaf 是一個 XML&#x2F;HTML5 模板引擎，能夠應用於模板設計檔案，非常適合 Spring 框架進行開發 HTML5 Web 應用程式 環境設置以下將介紹使用 Thymeleaf 進行專案開發時，所需要設定的環境：  Spring Boot 在使用 Thymeleaf 時，須在配置加入 Thymeleaf 依賴套件  12&lt;!-- thymeleaf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 24] 遠征 Kotlin × Spring Boot 介紹 Template Engine (1)">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-24/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="Thymeleaf 是什麼Thymeleaf 是一個 XML&#x2F;HTML5 模板引擎，能夠應用於模板設計檔案，非常適合 Spring 框架進行開發 HTML5 Web 應用程式 環境設置以下將介紹使用 Thymeleaf 進行專案開發時，所需要設定的環境：  Spring Boot 在使用 Thymeleaf 時，須在配置加入 Thymeleaf 依賴套件  12&lt;!-- thymeleaf">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201003/20121179n1hePMgN14.png">
+<meta property="article:published_time" content="2020-10-11T11:13:37.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:13:37.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20201003/20121179n1hePMgN14.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-24/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-24" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 24] 遠征 Kotlin × Spring Boot 介紹 Template Engine (1)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-24/" class="article-date">
+	  <time datetime="2020-10-11T11:13:37.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-24/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="Thymeleaf-是什麼"><a href="#Thymeleaf-是什麼" class="headerlink" title="Thymeleaf 是什麼"></a>Thymeleaf 是什麼</h3><p>Thymeleaf 是一個 <code>XML/HTML5</code> 模板引擎，能夠應用於模板設計檔案，非常適合 Spring 框架進行開發 HTML5 Web 應用程式</p>
+<h2 id="環境設置"><a href="#環境設置" class="headerlink" title="環境設置"></a>環境設置</h2><p>以下將介紹使用 <code>Thymeleaf</code> 進行專案開發時，所需要設定的環境：</p>
+<ol>
+<li><p>Spring Boot 在使用 <code>Thymeleaf</code> 時，須在配置加入 <code>Thymeleaf</code> 依賴套件</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- thymeleaf 相關依賴 --&gt;</span><br><span class="line">implementation(<span class="string">&quot;org.springframework.boot:spring-boot-starter-thymeleaf&quot;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 <code>application.yml</code> 新增 <code>Thymeleaf</code> 相關配置，具體配置如下：</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">h2:</span> <span class="comment"># 設定 H2 資料庫相關配置</span></span><br><span class="line">    <span class="attr">console:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/h2-console</span></span><br><span class="line"><span class="attr">datasource:</span> <span class="comment"># 設定資料庫相關配置</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:h2:file:./src/main/resources/data/ironman;AUTO_SERVER=true</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">sa</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">Ironman0924!</span></span><br><span class="line"><span class="attr">jpa:</span> <span class="comment"># 設定 JPA 相關配置</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">        <span class="attr">ddl-auto:</span> <span class="string">update</span></span><br><span class="line">        <span class="attr">database-platform:</span> <span class="string">H2</span></span><br><span class="line">        <span class="attr">show-sql:</span> <span class="literal">true</span></span><br><span class="line">        <span class="attr">generate-ddl:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">thymeleaf:</span></span><br><span class="line">    <span class="attr">cache:</span> <span class="literal">false</span>    <span class="comment"># 關閉 Cache</span></span><br><span class="line">    <span class="attr">encoding:</span> <span class="string">UTF-8</span> <span class="comment"># 編碼設定</span></span><br><span class="line">    <span class="attr">mode:</span> <span class="string">HTML5</span>     <span class="comment"># 模式</span></span><br><span class="line">    <span class="attr">suffix:</span> <span class="string">.html</span>   <span class="comment"># 檔案副檔名</span></span><br><span class="line">    <span class="attr">prefix:</span> <span class="string">classpath:/templates/</span> <span class="comment"># 檔案儲存位置</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>撰寫 <code>Controller</code>，新增 <code>HomeController.kt</code> 檔案，內容如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HomeController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(<span class="meta-string">&quot;/&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">home</span><span class="params">()</span></span> : String &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;home&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 <code>resources/templates</code> 路徑下新增頁面檔案 <code>home.html</code>，並新增內容如下：</p>
+ <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!doctype <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">content</span>=<span class="string">&quot;width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;ie=edge&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">Hi, Thymeleaf</span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>開啟瀏覽器進行測試，會發現以下頁面內容：</p>
+<p> <img src="https://ithelp.ithome.com.tw/upload/images/20201003/20121179n1hePMgN14.png" alt="https://ithelp.ithome.com.tw/upload/images/20201003/20121179n1hePMgN14.png"></p>
+</li>
+</ol>
+<h2 id="Thymeleaf-常用語法"><a href="#Thymeleaf-常用語法" class="headerlink" title="Thymeleaf 常用語法"></a>Thymeleaf 常用語法</h2><h3 id="變數表達式"><a href="#變數表達式" class="headerlink" title="變數表達式"></a>變數表達式</h3><p>Thymeleaf 預設帶有標準方言 Standard，它們定義了一組功能，這些功能足以讓我們應付大多數專案需求，而這些標準方言在模板的使用方式會包含以th字首開頭的屬性，如<code>&lt;span th:text=&quot;...&quot;&gt;</code>，表達式共有五種型別，分別整理如下：</p>
+<ul>
+<li><code>$&#123;...&#125;</code>  變數表示式</li>
+<li><code>&#123;...&#125;</code>  選擇表示式</li>
+<li><code>#&#123;...&#125;</code>  訊息 (i18n) 表示式</li>
+<li><code>@&#123;...&#125;</code>  連結 (URL) 表示式</li>
+<li><code>~&#123;...&#125;</code> : 片段表示式</li>
+</ul>
+<h3 id="變量表達式"><a href="#變量表達式" class="headerlink" title="變量表達式"></a>變量表達式</h3><p>變量表達式即 OGNL 表示式或 Spring EL 表示式（在 Spring 術語中也叫 model attributes）</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$&#123;session.user.name&#125;</span><br><span class="line"></span><br><span class="line">&lt;span th:text=<span class="string">&quot;$&#123;book.author.name&#125;&quot;</span>&gt;</span><br><span class="line">&lt;li th:each=<span class="string">&quot;book : $&#123;books&#125;&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="選擇-星號-表示式"><a href="#選擇-星號-表示式" class="headerlink" title="選擇(星號)表示式"></a>選擇(星號)表示式</h3><p>選擇表示式很像變量表達式，不過它們用一個預先選擇的物件來代替上下文變數容器（map）來執行</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">*&#123;customer.name&#125;</span><br><span class="line"></span><br><span class="line">&lt;div th:object=<span class="string">&quot;$&#123;book&#125;&quot;</span>&gt;</span><br><span class="line">  ...</span><br><span class="line">  &lt;span th:text=<span class="string">&quot;*&#123;title&#125;&quot;</span>&gt;...&lt;/span&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="文字國際化表示式"><a href="#文字國際化表示式" class="headerlink" title="文字國際化表示式"></a>文字國際化表示式</h3><p>文字國際化表示式允許我們從一個外部檔案獲取區域文字資訊(.properties)，用 Key 索引 Value，還可以提供一組引數</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#&#123;main.title&#125;  </span><br><span class="line">#&#123;message.entrycreated($&#123;entryId&#125;)&#125;</span><br><span class="line"></span><br><span class="line">&lt;table&gt;</span><br><span class="line">  ...</span><br><span class="line">  &lt;th th:text=<span class="string">&quot;#&#123;header.address.city&#125;&quot;</span>&gt;...&lt;/th&gt;</span><br><span class="line">  &lt;th th:text=<span class="string">&quot;#&#123;header.address.country&#125;&quot;</span>&gt;...&lt;/th&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/table&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="URL表示式"><a href="#URL表示式" class="headerlink" title="URL表示式"></a>URL表示式</h3><p>URL 表示式指的是把一個有用的上下文資訊新增到 URL，這個過程經常被叫做 URL Rewrite</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@&#123;<span class="regexp">/order/</span>list&#125;</span><br><span class="line"></span><br><span class="line">@&#123;<span class="regexp">/order/</span>details(id=$&#123;orderId&#125;)&#125;</span><br><span class="line">@&#123;../documents/report&#125;</span><br><span class="line"></span><br><span class="line">&lt;form th:action=<span class="string">&quot;@&#123;/createOrder&#125;&quot;</span>&gt;</span><br><span class="line">&lt;a href=<span class="string">&quot;main.html&quot;</span> th:href=<span class="string">&quot;@&#123;/main&#125;&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>以上主要介紹 Thymeleaf 環境建置與基本的變數表達用法，下一篇將進行實作範例，實作會讓我們對於 Thymeleaf 的使用上更加了解。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-23/" title="[Day 23] 遠征 Kotlin × Spring Boot 介紹單元測試 (2)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-25/" title="[Day 25] 遠征 Kotlin × Spring Boot 介紹 Template Engine (2)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-24/';
+        
+        this.page.identifier = 'ironman-2020-24';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 13] 遠征 Kotlin × 建置 Spring Boot 專案 | Devin Blog</title>
+  <meta name="description" content="編輯器環境說明接下來，這篇文章將帶大家建置 Spring Boot 專案，本系列文章使用的編輯器為 Intellij ，但因為使用的 intellij 為 ultimate 版本，ultimate 本身其實會內建許多工具，例如建立 Spring Boot 專案時會有一個快速建置 Spring Boot 專案的選項 Spring Initializr，如下圖：  如果正在閱讀的朋友是使用 commu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 13] 遠征 Kotlin × 建置 Spring Boot 專案">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-13/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="編輯器環境說明接下來，這篇文章將帶大家建置 Spring Boot 專案，本系列文章使用的編輯器為 Intellij ，但因為使用的 intellij 為 ultimate 版本，ultimate 本身其實會內建許多工具，例如建立 Spring Boot 專案時會有一個快速建置 Spring Boot 專案的選項 Spring Initializr，如下圖：  如果正在閱讀的朋友是使用 commu">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179vanA5k6E07.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179ysWNJLX809.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179HcPUgQDqjw.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179FEpqdrsft3.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179ZFkvFLVAXZ.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179lQDvYlYD00.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179gFy7vR1LKm.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179bcKxmv2HTU.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179sdonpmR028.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179PiSDZYzH4f.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179D9v9ffSBCG.png">
+<meta property="article:published_time" content="2020-10-11T11:18:22.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:18:22.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200922/20121179vanA5k6E07.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-13/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-13" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 13] 遠征 Kotlin × 建置 Spring Boot 專案
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-13/" class="article-date">
+	  <time datetime="2020-10-11T11:18:22.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-13/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="編輯器環境說明"><a href="#編輯器環境說明" class="headerlink" title="編輯器環境說明"></a>編輯器環境說明</h2><p>接下來，這篇文章將帶大家建置 <code>Spring Boot</code> 專案，本系列文章使用的編輯器為 <code>Intellij</code> ，但因為使用的 intellij 為 <code>ultimate</code> 版本，ultimate 本身其實會內建許多工具，例如建立 Spring Boot 專案時會有一個快速建置 Spring Boot 專案的選項 <code>Spring Initializr</code>，如下圖：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179vanA5k6E07.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179vanA5k6E07.png"></p>
+<p>如果正在閱讀的朋友是使用 <code>community</code> 版本的話，大家可以到 intellij 的 <code>Preferences</code> → <code>Plugins</code> → 安裝 <code>Spring Assistant</code> 套件，即可在 Create 專案裡面找到 Spring Boot 起始專案建立選項，如下圖(1)、(2)所示：</p>
+<p>(1) 至 intellij 的 Preferences → Plugins → 搜尋 Spring Assistant 套件<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179ysWNJLX809.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179ysWNJLX809.png"></p>
+<p>(2) 建立專案（New → Project）時，會出現 <code>Spring Assistant</code> 選項，即可像 <code>ultimate</code> 版本快速建置 Spring Boot 專案<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179HcPUgQDqjw.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179HcPUgQDqjw.png"></p>
+<hr>
+<h2 id="建置步驟"><a href="#建置步驟" class="headerlink" title="建置步驟"></a>建置步驟</h2><p>接下來，我們就來建置一個 Spring Boot 專案：</p>
+<p>(1) 開啟 intellij 編輯器 → New → Project 建立專案<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179FEpqdrsft3.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179FEpqdrsft3.png"></p>
+<p>(2) 此頁面是可以設定 <code>Project Metadata</code> 資訊，資料除了meta設定以外，要記得在 Language 選擇 <code>Kotlin</code>，Java 版本要記得用自己環境裝的JDK版本，此範例使用 <code>Java 8</code> 進行開發，Type 選擇使用 <code>Maven Project</code> （下一個章節也會介紹如何用 <code>Gradle</code> 建置專案）<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179ZFkvFLVAXZ.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179ZFkvFLVAXZ.png"></p>
+<p>(3) 設定 Spring Boot 版本與勾選需要的套件，這邊可以先勾選 <code>Web</code> -&gt; <code>Spring Web</code>，Spring Boot 版本選擇 <code>2.3.4</code><br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179lQDvYlYD00.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179lQDvYlYD00.png"></p>
+<p>(4) 設定專案路徑<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179gFy7vR1LKm.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179gFy7vR1LKm.png"></p>
+<p>(5) 若您的版本為 <code>ultimate</code> 版本，可以直接點擊右上角執行專案，可以參考下面第一張圖(a)，如果是 <code>Community</code> 版本，因為沒有預設啟動功能，但仍可以利用右側 <code>Maven</code> 區塊點擊 <code>Plugins</code> → <code>spring-boot</code> → <code>spring-boot:run</code> 的方式運行專案，則參考下面第二張圖(b)</p>
+<p>a. ultimate 版本直接點擊右上角運行鈕（三角形）運行專案<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179bcKxmv2HTU.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179bcKxmv2HTU.png"></p>
+<p>b. community 版本可以用 Maven 區塊點擊 Plugins → spring-boot → spring-boot:run 的方式運行專案<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179sdonpmR028.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179sdonpmR028.png"></p>
+<p>(6) 可以在 <code>DemoApplication.kt</code> 檔案中加入下面這段程式，請參考下面圖(a），加入程式碼後再重新運行程式，打開瀏覽器進入（<a target="_blank" rel="noopener" href="http://localhost:8080/hello%EF%BC%89">http://localhost:8080/hello）</a> 即可看到「Hello, Kotlin」文字，可參考下圖（b)、(c)</p>
+<p>a. 在 DemoApplication.kt 直接在下面加入以下程式</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HomeController</span></span>() &#123;</span><br><span class="line">    <span class="meta">@GetMapping(<span class="meta-string">&quot;/hello&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getHelloString</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello, Kotlin&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>b. 加入程式碼後的結果圖<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179PiSDZYzH4f.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179PiSDZYzH4f.png"></p>
+<p>c. 執行專案後，打開瀏覽器觀看執行結果「Hello, Kotlin」<br><img src="https://ithelp.ithome.com.tw/upload/images/20200922/20121179D9v9ffSBCG.png" alt="https://ithelp.ithome.com.tw/upload/images/20200922/20121179D9v9ffSBCG.png"></p>
+<p>以上，我們已經完成 Spring Boot 專案建置，也成功設計了一隻取得「Hello, Kotlin」文字的API，我們可以感受到 Spring Boot 協助我們快速進入開發，若是使用以往的Spring配置，可能還需要設定非常多環境設定才可以進行開發動作，而後續章節會陸續開始說明每個 Spring Boot 開發應用。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-12/" title="[Day 12] 遠征 Kotlin × 進入 Spring Boot 世界"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-14/" title="[Day 14] 遠征 Kotlin × Spring Boot 專案配置介紹"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-13/';
+        
+        this.page.identifier = 'ironman-2020-13';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

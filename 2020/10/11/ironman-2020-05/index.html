@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 05] 遠征 Kotlin × 函數介紹 | Devin Blog</title>
+  <meta name="description" content="這篇將帶大家了解 Kotlin 在函數 Function 的基本操作，函數 Function 在程式設計中扮演非常重要的角色，通常使用 function 會有以下好處：  減少撰寫重複程式碼，提高程式維護性 將程式碼以有意義的命名進行組織 若有相同流程的行為，可藉由參數傳遞進行處理  函數定義Function 是我們為了能夠完成某項特定任務或可重新使用的程式碼區塊，在 Kotlin 中是使用 fu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 05] 遠征 Kotlin × 函數介紹">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-05/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="這篇將帶大家了解 Kotlin 在函數 Function 的基本操作，函數 Function 在程式設計中扮演非常重要的角色，通常使用 function 會有以下好處：  減少撰寫重複程式碼，提高程式維護性 將程式碼以有意義的命名進行組織 若有相同流程的行為，可藉由參數傳遞進行處理  函數定義Function 是我們為了能夠完成某項特定任務或可重新使用的程式碼區塊，在 Kotlin 中是使用 fu">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200914/20121179arGftABTNX.png">
+<meta property="article:published_time" content="2020-10-11T11:28:23.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:28:23.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200914/20121179arGftABTNX.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-05/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-05" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 05] 遠征 Kotlin × 函數介紹
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-05/" class="article-date">
+	  <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-05/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>這篇將帶大家了解 Kotlin 在函數 Function 的基本操作，函數 Function 在程式設計中扮演非常重要的角色，通常使用 function 會有以下好處：</p>
+<ul>
+<li>減少撰寫重複程式碼，提高程式維護性</li>
+<li>將程式碼以有意義的命名進行組織</li>
+<li>若有相同流程的行為，可藉由參數傳遞進行處理</li>
+</ul>
+<h2 id="函數定義"><a href="#函數定義" class="headerlink" title="函數定義"></a>函數定義</h2><p>Function 是我們為了能夠完成某項特定任務或可重新使用的程式碼區塊，在 Kotlin 中是使用 fun 關鍵字來定義一個函式，其定義格式可參考下圖與利用一個範例進行說明：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200914/20121179arGftABTNX.png" alt="https://ithelp.ithome.com.tw/upload/images/20200914/20121179arGftABTNX.png"></p>
+<p>此範例建立一個 <code>getSumValue</code> Function 進行兩數加總，在 <code>main</code> function 進行呼叫並印出結果</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> sum = getSumValue(<span class="number">1</span>, <span class="number">2</span>) <span class="comment">// 傳入參數 1 和 參數 2</span></span><br><span class="line">    println(sum) <span class="comment">// 印出 3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getSumValue</span><span class="params">(x: <span class="type">Int</span>, y: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> sum = x + y <span class="comment">// 計算</span></span><br><span class="line">    <span class="keyword">return</span> sum</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="預設參數值"><a href="#預設參數值" class="headerlink" title="預設參數值"></a>預設參數值</h2><p>Kotlin 在 Function 中提供預設函數參數值方法，假設我們想呼叫某一個函數，但不傳遞任何參數，此時就可以使用參數預設值作為函數的參數值，範例如下：</p>
+<p>修改前一個範例，當我們沒有傳入任何參數給 <code>getSumValue</code> 方法時，照理應回傳 <code>0</code> 的結果，此時可設定兩個參數預設值為 <code>0</code></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> sum = getSumValue()</span><br><span class="line">    println(sum)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 利用預設參數 x = 0, y = 0</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getSumValue</span><span class="params">(x: <span class="type">Int</span> = <span class="number">0</span>, y: <span class="type">Int</span> = <span class="number">0</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> sum = x + y <span class="comment">// 計算</span></span><br><span class="line">    <span class="keyword">return</span> sum</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="具名參數"><a href="#具名參數" class="headerlink" title="具名參數"></a>具名參數</h2><p>在前面第一個範例中，我們會發現 Function 呼叫時，必須根據函式參數順序（x, y）進行參數傳遞，而 Kotlin 有提供「具名參數」方法，讓我們可以不用照著函數定義時的參數順序進行呼叫，而是呼叫時搭配參數名稱進行賦值呼叫，此作法可以讓我們的程式碼更清晰直觀，例如以下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> sum = getSumValue(y = <span class="number">20</span>, x = <span class="number">30</span>) <span class="comment">// 加入參數名稱就可以不用管實際函數參數順序</span></span><br><span class="line">    println(sum)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getSumValue</span><span class="params">(x: <span class="type">Int</span> = <span class="number">0</span>, y: <span class="type">Int</span> = <span class="number">0</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> sum = x + y <span class="comment">// 計算</span></span><br><span class="line">    <span class="keyword">return</span> sum</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="匿名函數-Anonymous-Function"><a href="#匿名函數-Anonymous-Function" class="headerlink" title="匿名函數 Anonymous Function"></a>匿名函數 Anonymous Function</h2><p>前面介紹的函數其實都是使用<code>具名函數</code>來定義，使用此方法就必須賦予一個函數名稱，而<code>匿名函數</code>則相反，不需要給予函數名稱，<code>匿名函數</code>也可稱為 <code>Lambda 運算式</code>，它通常具有以下特性：</p>
+<ol>
+<li>此函數不需要 <code>return</code> 關鍵字返回資料，則是會隱式自動回傳函數最後一行結果或運算式</li>
+<li>在定義<code>只有一個參數</code>的匿名函數中，可以使用 <code>it</code> 關鍵字進行呼叫表示該參數</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span> = arrayOf(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) <span class="comment">// 原始資料</span></span><br><span class="line">    <span class="keyword">val</span> multiply = &#123;x: <span class="built_in">Int</span>, y: <span class="built_in">Int</span> -&gt; x * y&#125; <span class="comment">// 提供一個乘法匿名函數，自動回傳最後一行運算式（x * y）</span></span><br><span class="line">    <span class="keyword">data</span>.forEach &#123; println(multiply(it, <span class="number">3</span>)) &#125; <span class="comment">// 只有一個參數時，可使用 it 代替 item 數值</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出 3 6 9</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="高階函數-Higher-Order-Functions"><a href="#高階函數-Higher-Order-Functions" class="headerlink" title="高階函數 Higher-Order Functions"></a>高階函數 Higher-Order Functions</h2><p>在 Kotlin 中支援 <code>Higher - Order Function（高階函數）</code> 方法，所謂高階函數是指我們可以將 <code>Function 作為變數</code>來進行傳遞，或是 Function 的返回值是一個 <code>Function 類型進行回傳</code>，此種特性也代表 Kotlin Function 是支援 <code>First-class-object （第一類物件）函數</code>。</p>
+<p>我們利用字串反轉應用為範例如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 宣告反轉函數</span></span><br><span class="line">    <span class="keyword">val</span> reverseMethod: (String) -&gt; String = &#123; text: String -&gt; text.reversed() &#125;</span><br><span class="line">    <span class="comment">// 呼叫欲反轉字串與帶入反轉函數</span></span><br><span class="line">    <span class="keyword">val</span> result: String = getReverseResult(<span class="string">&quot;字串反轉&quot;</span>, reverseMethod)</span><br><span class="line">    println(<span class="string">&quot;反轉結果為： <span class="variable">$result</span>&quot;</span>) <span class="comment">// 反轉結果為： 轉反串字</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 傳入字串與 Function</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getReverseResult</span><span class="params">(text: <span class="type">String</span>, callMethod: (<span class="type">String</span>) -&gt; <span class="type">String</span>)</span></span>: String &#123;</span><br><span class="line">    <span class="keyword">return</span> callMethod(text)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函數返回值為一個函數類型，可參考下面的範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span> = listOf(<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>) <span class="comment">// 定義一個數值 List</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> dividedByTwo = <span class="keyword">data</span>.filter(divide(<span class="number">2</span>)) <span class="comment">//被2整除的元素列表</span></span><br><span class="line">    <span class="keyword">val</span> dividedByThree = <span class="keyword">data</span>.filter(divide(<span class="number">3</span>)) <span class="comment">//被3整除的元素列表</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出「可被 2 整除的數值有: [10, 12, 14]」</span></span><br><span class="line">    println(<span class="string">&quot;可被 2 整除的數值有: <span class="variable">$dividedByTwo</span>&quot;</span>)  </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 印出「可被 3 整除的數值有: [12, 15]」</span></span><br><span class="line">    println(<span class="string">&quot;可被 3 整除的數值有: <span class="variable">$dividedByThree</span>&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 傳入要除的數值，回傳則為一個函數 function，傳入一個數值判斷是否可整除（回傳 Boolean）</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">divide</span><span class="params">(number: <span class="type">Int</span>)</span></span>: (<span class="built_in">Int</span>) -&gt; <span class="built_in">Boolean</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; it: <span class="built_in">Int</span> -&gt; it % number == <span class="number">0</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-04/" title="[Day 04] 遠征 Kotlin × 流程控制"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-06/" title="[Day 06] 遠征 Kotlin × Collections 介紹"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-05/';
+        
+        this.page.identifier = 'ironman-2020-05';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

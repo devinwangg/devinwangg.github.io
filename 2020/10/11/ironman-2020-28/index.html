@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 28] 遠征 Kotlin × Spring Boot 介紹 WebSocket 實作 | Devin Blog</title>
+  <meta name="description" content="先前我們設計的 API 其實都是利用 HTTP 協定進行傳輸，而 HTTP 只能利用 Client 端發送請求到 Service端，這類型屬於單向的，而 WebSocket 也是一種網路傳輸協定，它可以支援我們在 TCP 連接上進行全雙工通訊，使得 Client 端和 Server 端之間的資料交換可以變得更簡單，允許 Server 端主動向 Client 端傳輸資料。 早期，網站為了實現 Ser">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 28] 遠征 Kotlin × Spring Boot 介紹 WebSocket 實作">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-28/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="先前我們設計的 API 其實都是利用 HTTP 協定進行傳輸，而 HTTP 只能利用 Client 端發送請求到 Service端，這類型屬於單向的，而 WebSocket 也是一種網路傳輸協定，它可以支援我們在 TCP 連接上進行全雙工通訊，使得 Client 端和 Server 端之間的資料交換可以變得更簡單，允許 Server 端主動向 Client 端傳輸資料。 早期，網站為了實現 Ser">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201007/20121179mdbSLkn5lX.png">
+<meta property="article:published_time" content="2020-10-11T11:08:09.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:08:09.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20201007/20121179mdbSLkn5lX.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-28/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-28" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 28] 遠征 Kotlin × Spring Boot 介紹 WebSocket 實作
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-28/" class="article-date">
+	  <time datetime="2020-10-11T11:08:09.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-28/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>先前我們設計的 API 其實都是利用 <code>HTTP</code> 協定進行傳輸，而 HTTP <strong>只能利用 Client 端發送請求到 Service端</strong>，這類型屬於單向的，而 <code>WebSocket</code> 也是一種網路傳輸協定，它可以支援我們在 TCP 連接上進行全雙工通訊，使得 Client 端和 Server 端之間的資料交換可以變得更簡單，允許 Server 端主動向 Client 端傳輸資料。</p>
+<p>早期，網站為了實現 Server 端向 Client 端傳輸資料，會使用到<code>輪詢（Polling）</code>技術，此技術主要就是<strong>在 Client端設計由瀏覽器每隔一段時間向 Server 端發送 HTTP 請求（Request），再由 Server 端回應最新的資料給 Client端</strong>，而此技術最大的缺點就是瀏覽器會不斷向 Server 端發送請求，可能會造成浪費許多頻寬資源。</p>
+<p>目前較新的 Polling 技術是 <code>Comet</code> ，採用的方法是<code>長時間輪詢（Long-Polling）</code>，設計概念則是<strong>讓 Server 在接收到瀏覽器所送出的 Http 請求後，Server 端會等待一段時間，若在這段時間內伺服器有新的資料，他就會把最新的資料傳給瀏覽器</strong>，倘若沒有新的資料，則會回應瀏覽器資料沒有更新。雖然 Long-Polling 可以減少原先 Polling 技術造成網路頻寬浪費的狀況，但如果專案功能是屬於資料更新頻率很高的狀況下，Long-Polling 其實不會比 Polling 還要有效率。</p>
+<p>而此篇要介紹的 <code>WebSocket</code> 協定其實也是建立於 HTTP 架構之上，它背後基本上還是以 HTTP 作為傳輸層，與 HTTP 一樣使用 80、443 port（https），但 WebSocket 大幅改善了 Comet 缺點，連線數量減少為一條，當 Server 端有資料更新時，會自動傳送給 Client 端，進行<code>即時更新（Realtime）</code>的動作，所以WebSocket非常適用於即時系統上，例如聊天室、遊戲、證券交易系統、多人共同編輯工具等。</p>
+<p>接下來，我們直接實作聊天室應用來深入感受 WebSocket 技術：</p>
+<ol>
+<li><p>在 Gradle <code>build.gradle.kts</code> 加入 <code>WebSocket</code> 套件</p>
+ <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation(<span class="string">&quot;org.springframework.boot:spring-boot-starter-websocket&quot;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>建立 WebSocket 配置－ <code>WebSocketConfig</code></p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebSocketMessageBroker</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WebSocketConfig</span> : <span class="type">WebSocketMessageBrokerConfigurer &#123;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">registerStompEndpoints</span><span class="params">(stompEndpointRegistry: <span class="type">StompEndpointRegistry</span>)</span></span> &#123;</span><br><span class="line">        stompEndpointRegistry.addEndpoint(<span class="string">&quot;/ws&quot;</span>).setAllowedOrigins().withSockJS()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">configureMessageBroker</span><span class="params">(messageBrokerRegistry: <span class="type">MessageBrokerRegistry</span>)</span></span> &#123;</span><br><span class="line">        messageBrokerRegistry.setApplicationDestinationPrefixes(<span class="string">&quot;/app&quot;</span>)</span><br><span class="line">        messageBrokerRegistry.enableSimpleBroker(<span class="string">&quot;/topic&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>建立 Data Class－ <code>ChatMessage</code></p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageType</span> </span>&#123;</span><br><span class="line">    CHAT,</span><br><span class="line">    JOIN,</span><br><span class="line">    LEAVE</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatMessage</span></span>(</span><br><span class="line">        <span class="keyword">val</span> type: MessageType,</span><br><span class="line">        <span class="keyword">val</span> content: String? = <span class="literal">null</span>,</span><br><span class="line">        <span class="keyword">val</span> sender: String</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>建立 WebSocketConfig 監聽器－ <code>WebSocketConfig</code></p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WebSocketEventListener</span></span>(<span class="meta">@Autowired</span> <span class="keyword">val</span> simpleMessageSendingOperations: SimpMessageSendingOperations) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> logger: Logger = LoggerFactory.getLogger(WebSocketEventListener::<span class="keyword">class</span>.java)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * WebSocket 連線監聽器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@EventListener</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">handleWebSocketConnectListener</span><span class="params">(sessionConnectedEvent: <span class="type">SessionConnectedEvent</span>)</span></span> &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;接收到新的連線&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * WebSocket 中斷連線監聽器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@EventListener</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">handleWebSocketDisconnectListener</span><span class="params">(sessionDisconnectEvent: <span class="type">SessionDisconnectEvent</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> stompHeaderAccessor: StompHeaderAccessor = StompHeaderAccessor.wrap(sessionDisconnectEvent.message)</span><br><span class="line">        <span class="keyword">val</span> username: String? = stompHeaderAccessor.sessionAttributes?.<span class="keyword">get</span>(<span class="string">&quot;username&quot;</span>) <span class="keyword">as</span> String?</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (username != <span class="literal">null</span>) &#123;</span><br><span class="line">            logger.info(<span class="string">&quot;<span class="variable">$username</span> 使用者離開聊天室&quot;</span>);</span><br><span class="line">            <span class="keyword">val</span> chatMessage = ChatMessage(</span><br><span class="line">                    type = MessageType.LEAVE,</span><br><span class="line">                    sender = username</span><br><span class="line">            )</span><br><span class="line">            simpleMessageSendingOperations.convertAndSend(<span class="string">&quot;/topic/public&quot;</span>, chatMessage);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>建立 Controller 方法－ <code>ChatController</code></p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增聊天訊息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MessageMapping(<span class="meta-string">&quot;/sendMessage&quot;</span>)</span></span><br><span class="line">    <span class="meta">@SendTo(<span class="meta-string">&quot;/topic/public&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sendMessage</span><span class="params">(<span class="meta">@Payload</span> chatMessage: <span class="type">ChatMessage</span>)</span></span>: ChatMessage = chatMessage</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增使用者</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MessageMapping(<span class="meta-string">&quot;/addUser&quot;</span>)</span></span><br><span class="line">    <span class="meta">@SendTo(<span class="meta-string">&quot;/topic/public&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">addUser</span><span class="params">(<span class="meta">@Payload</span> chatMessage: <span class="type">ChatMessage</span>, simpMessageHeaderAccessor: <span class="type">SimpMessageHeaderAccessor</span>)</span></span>: ChatMessage &#123;</span><br><span class="line">        <span class="comment">// 設定使用者姓名</span></span><br><span class="line">        simpMessageHeaderAccessor.sessionAttributes?.put(<span class="string">&quot;username&quot;</span>, chatMessage.sender)</span><br><span class="line">        <span class="keyword">return</span> chatMessage</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>完成後端的 WebSocket 後，接下來我們實作前端聊天室部份，前端聊天室部份會採用 <code>Sockjs</code> 套件簡化 WebSocket 呼叫，而一般使用 <code>Sockjs</code> 會搭配 <code>Stomp</code> 套件一起使用。</p>
+</li>
+<li><p>在 <code>resources/static</code> 資料夾下新增 <code>index.html</code>，內容如下：</p>
+ <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0, minimum-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">title</span>&gt;</span>Spring Boot WebSocket 聊天室應用<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Type&quot;</span> <span class="attr">content</span>=<span class="string">&quot;text/html; charset=utf-8&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;/css/main.css&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">noscript</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">h2</span>&gt;</span>Sorry! 您的瀏覽器不支援<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;username-page&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;username-page-container&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">h1</span> <span class="attr">class</span>=<span class="string">&quot;title&quot;</span>&gt;</span>輸入聊天室使用者名稱<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">&quot;usernameForm&quot;</span> <span class="attr">name</span>=<span class="string">&quot;usernameForm&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">id</span>=<span class="string">&quot;name&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;使用者名稱&quot;</span> <span class="attr">autocomplete</span>=<span class="string">&quot;off&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">class</span>=<span class="string">&quot;accent username-submit&quot;</span>&gt;</span>開始聊天<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;chat-page&quot;</span> <span class="attr">class</span>=<span class="string">&quot;hidden&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;chat-container&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;chat-header&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>Spring Boot WebSocket 聊天室<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;connecting&quot;</span>&gt;</span></span><br><span class="line">                連線中...</span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ul</span> <span class="attr">id</span>=<span class="string">&quot;messageArea&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">&quot;messageForm&quot;</span> <span class="attr">name</span>=<span class="string">&quot;messageForm&quot;</span> <span class="attr">nameForm</span>=<span class="string">&quot;messageForm&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;input-group clearfix&quot;</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">id</span>=<span class="string">&quot;message&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;輸入對話訊息&quot;</span> <span class="attr">autocomplete</span>=<span class="string">&quot;off&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control&quot;</span>/&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">class</span>=<span class="string">&quot;primary&quot;</span>&gt;</span>送出<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;/js/main.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 <code>resources/static/js</code> 資料夾新增 <code>main.js</code> 檔案，內容如下：</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> usernamePage = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#username-page&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> chatPage = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#chat-page&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> usernameForm = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#usernameForm&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> messageForm = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#messageForm&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> messageInput = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#message&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> messageArea = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#messageArea&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> connectingElement = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;.connecting&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> stompClient = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">let</span> username = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">let</span> colors = [</span><br><span class="line">    <span class="string">&#x27;#2196F3&#x27;</span>, <span class="string">&#x27;#32c787&#x27;</span>, <span class="string">&#x27;#00BCD4&#x27;</span>, <span class="string">&#x27;#ff5652&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;#ffc107&#x27;</span>, <span class="string">&#x27;#ff85af&#x27;</span>, <span class="string">&#x27;#FF9800&#x27;</span>, <span class="string">&#x27;#39bbb0&#x27;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 設定WebSocket連線</span></span><br><span class="line"><span class="keyword">const</span> connect = <span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">    username = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#name&#x27;</span>).value.trim();</span><br><span class="line">    <span class="keyword">if</span>(username) &#123;</span><br><span class="line">        usernamePage.classList.add(<span class="string">&#x27;hidden&#x27;</span>);</span><br><span class="line">        chatPage.classList.remove(<span class="string">&#x27;hidden&#x27;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> socket = <span class="keyword">new</span> SockJS(<span class="string">&#x27;/ws&#x27;</span>);</span><br><span class="line">        stompClient = Stomp.over(socket);</span><br><span class="line">        stompClient.connect(&#123;&#125;, onConnected, onError);</span><br><span class="line">    &#125;</span><br><span class="line">    event.preventDefault();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 連線成功時發出 addUser 請求</span></span><br><span class="line"><span class="keyword">const</span> onConnected = <span class="function">(<span class="params">options</span>) =&gt;</span> &#123;</span><br><span class="line">    stompClient.subscribe(<span class="string">&#x27;/topic/public&#x27;</span>, onMessageReceived);</span><br><span class="line">    stompClient.send(<span class="string">&quot;/app/addUser&quot;</span>,</span><br><span class="line">        &#123;&#125;,</span><br><span class="line">        <span class="built_in">JSON</span>.stringify(&#123;<span class="attr">sender</span>: username, <span class="attr">type</span>: <span class="string">&#x27;JOIN&#x27;</span>&#125;)</span><br><span class="line">    );</span><br><span class="line">    connectingElement.classList.add(<span class="string">&#x27;hidden&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 無法連線到 WebSocket 時出現錯誤</span></span><br><span class="line"><span class="keyword">const</span> onError = <span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    connectingElement.textContent = <span class="string">&#x27;無法連到 WebSocket 伺服器&#x27;</span>;</span><br><span class="line">    connectingElement.style.color = <span class="string">&#x27;red&#x27;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 發送對話訊息</span></span><br><span class="line"><span class="keyword">const</span> sendMessage = <span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> messageContent = messageInput.value.trim();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(messageContent &amp;&amp; stompClient) &#123;</span><br><span class="line">        <span class="keyword">let</span> chatMessage = &#123;</span><br><span class="line">            sender: username,</span><br><span class="line">            content: messageInput.value,</span><br><span class="line">            type: <span class="string">&#x27;CHAT&#x27;</span></span><br><span class="line">        &#125;;</span><br><span class="line">        stompClient.send(<span class="string">&quot;/app/sendMessage&quot;</span>, &#123;&#125;, <span class="built_in">JSON</span>.stringify(chatMessage));</span><br><span class="line">        messageInput.value = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    event.preventDefault();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收 WebSocket 回應進行處理</span></span><br><span class="line"><span class="keyword">const</span> onMessageReceived = <span class="function">(<span class="params">payload</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> message = <span class="built_in">JSON</span>.parse(payload.body);</span><br><span class="line">    <span class="keyword">let</span> messageElement = <span class="built_in">document</span>.createElement(<span class="string">&#x27;li&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(message.type === <span class="string">&#x27;JOIN&#x27;</span>) &#123;</span><br><span class="line">        messageElement.classList.add(<span class="string">&#x27;event-message&#x27;</span>);</span><br><span class="line">        message.content = message.sender + <span class="string">&#x27; joined!&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (message.type === <span class="string">&#x27;LEAVE&#x27;</span>) &#123;</span><br><span class="line">        messageElement.classList.add(<span class="string">&#x27;event-message&#x27;</span>);</span><br><span class="line">        message.content = message.sender + <span class="string">&#x27; left!&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (message.type === <span class="string">&#x27;CHAT&#x27;</span>)&#123;</span><br><span class="line">        messageElement.classList.add(<span class="string">&#x27;chat-message&#x27;</span>);</span><br><span class="line">        <span class="keyword">let</span> avatarElement = <span class="built_in">document</span>.createElement(<span class="string">&#x27;i&#x27;</span>);</span><br><span class="line">        <span class="keyword">let</span> avatarText = <span class="built_in">document</span>.createTextNode(message.sender[<span class="number">0</span>]);</span><br><span class="line">        avatarElement.appendChild(avatarText);</span><br><span class="line">        avatarElement.style[<span class="string">&#x27;background-color&#x27;</span>] = getHashBackgroundColor(message.sender);</span><br><span class="line">        messageElement.appendChild(avatarElement);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> usernameElement = <span class="built_in">document</span>.createElement(<span class="string">&#x27;span&#x27;</span>);</span><br><span class="line">        <span class="keyword">let</span> usernameText = <span class="built_in">document</span>.createTextNode(message.sender);</span><br><span class="line">        usernameElement.appendChild(usernameText);</span><br><span class="line">        messageElement.appendChild(usernameElement);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> textElement = <span class="built_in">document</span>.createElement(<span class="string">&#x27;p&#x27;</span>);</span><br><span class="line">    <span class="keyword">let</span> messageText = <span class="built_in">document</span>.createTextNode(message.content);</span><br><span class="line">    textElement.appendChild(messageText);</span><br><span class="line">    messageElement.appendChild(textElement);</span><br><span class="line"></span><br><span class="line">    messageArea.appendChild(messageElement);</span><br><span class="line">    messageArea.scrollTop = messageArea.scrollHeight;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取得姓名象徵顏色</span></span><br><span class="line"><span class="keyword">const</span> getHashBackgroundColor = <span class="function">(<span class="params">messageSender</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> hash = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; messageSender.length; i++) &#123;</span><br><span class="line">        hash = <span class="number">31</span> * hash + messageSender.charCodeAt(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> index = <span class="built_in">Math</span>.abs(hash % colors.length);</span><br><span class="line">    <span class="keyword">return</span> colors[index];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 設定 Submit 事件</span></span><br><span class="line">usernameForm.addEventListener(<span class="string">&#x27;submit&#x27;</span>, connect, <span class="literal">true</span>);</span><br><span class="line">messageForm.addEventListener(<span class="string">&#x27;submit&#x27;</span>, sendMessage, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最後完成結果<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201007/20121179mdbSLkn5lX.png" alt="https://ithelp.ithome.com.tw/upload/images/20201007/20121179mdbSLkn5lX.png"></p>
+</li>
+</ol>
+<blockquote>
+<p>此文章有提供範例程式碼在 <a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-websocket-example">Github</a> 供大家參考</p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[文章] <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WebSocket">維基百科（WebSocket）</a></li>
+<li>[文章]<a target="_blank" rel="noopener" href="https://blog.gtwang.org/web-development/websocket-protocol/">WebSocket 通訊協定簡介：比較 Polling、Long-Polling 與 Streaming 的運作原理）</a></li>
+<li>[文章]<a target="_blank" rel="noopener" href="https://www.callicoder.com/spring-boot-websocket-chat-example/">Building a chat application with Spring Boot and WebSocket</a></li>
+<li>[文章]<a target="_blank" rel="noopener" href="https://codingnote.cc/zh-tw/p/207167">常用的Websocket技術一覽</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-27/" title="[Day 27] 遠征 Kotlin × Spring Boot 介紹 Spring AOP 機制"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-29/" title="[Day 29] 遠征 Kotlin × Spring Boot 介紹多資料庫連線配置"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-28/';
+        
+        this.page.identifier = 'ironman-2020-28';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 21] 遠征 Kotlin × Spring Boot 爬蟲實戰教學 | Devin Blog</title>
+  <meta name="description" content="今日看到有許多鐵人賽的朋友紛紛完賽，有點好奇目前還有幾位鐵人還在一起努力，於是想到可以撰寫爬蟲 Web scraper 程式來了解一下，而在 Java library 中有個 JSOUP 套件，此套件有提供許多方便易用的 API 可以解析 HTML，使用方法與 CSS 或 jQuery 選擇器類似，也因為 Kotlin 與 Java 整合度非常好，所以 Kotlin 可以直接呼叫 Java Lib">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 21] 遠征 Kotlin × Spring Boot 爬蟲實戰教學">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-21/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="今日看到有許多鐵人賽的朋友紛紛完賽，有點好奇目前還有幾位鐵人還在一起努力，於是想到可以撰寫爬蟲 Web scraper 程式來了解一下，而在 Java library 中有個 JSOUP 套件，此套件有提供許多方便易用的 API 可以解析 HTML，使用方法與 CSS 或 jQuery 選擇器類似，也因為 Kotlin 與 Java 整合度非常好，所以 Kotlin 可以直接呼叫 Java Lib">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200930/20121179Kz4OyH8kw1.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200930/20121179ljsaiEjRke.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200930/201211794tbE04dZuE.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200930/2012117934bBuQXbif.png">
+<meta property="article:published_time" content="2020-10-11T11:15:11.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:15:11.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200930/20121179Kz4OyH8kw1.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-21/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-21" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 21] 遠征 Kotlin × Spring Boot 爬蟲實戰教學
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-21/" class="article-date">
+	  <time datetime="2020-10-11T11:15:11.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-21/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>今日看到有許多鐵人賽的朋友紛紛完賽，有點好奇目前還有幾位鐵人還在一起努力，於是想到可以撰寫<code>爬蟲 Web scraper</code> 程式來了解一下，而在 Java library 中有個 <a target="_blank" rel="noopener" href="https://jsoup.org/">JSOUP</a> 套件，此套件有提供許多方便易用的 API 可以解析 HTML，使用方法與 <code>CSS</code> 或 <code>jQuery</code> 選擇器類似，也因為 Kotlin 與 Java 整合度非常好，所以 Kotlin 可以直接呼叫 Java Library 讓我們順利處理許多事情，下面我們來介紹 <code>JSOUP</code> 的使用方式與實作範例「鐵人賽比賽現況」</p>
+<h2 id="引入方法"><a href="#引入方法" class="headerlink" title="引入方法"></a>引入方法</h2><p>若要使用 JSOUP 套件要記得先引入套件，下面是 <code>Maven</code> 與 <code>Gradle</code> 分別引用方式</p>
+<ul>
+<li><p>Maven</p>
+  <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&lt;dependency&gt;</span></span><br><span class="line">  <span class="string">&lt;groupId&gt;org.jsoup&lt;/groupId&gt;</span></span><br><span class="line">  <span class="string">&lt;artifactId&gt;jsoup&lt;/artifactId&gt;</span></span><br><span class="line">  <span class="string">&lt;version&gt;1.13.1&lt;/version&gt;</span></span><br><span class="line"><span class="string">&lt;/dependency&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Gradle</p>
+  <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">compile</span> <span class="string">&#x27;org.jsoup:jsoup:1.13.1&#x27;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="資料輸入方法"><a href="#資料輸入方法" class="headerlink" title="資料輸入方法"></a>資料輸入方法</h2><p>JSOUP 主要支援四種輸入（Input）方式進行解析成 Document 物件，如下：</p>
+<ol>
+<li><p><strong>從 字串 解析</strong></p>
+<p> 此方法要注意字串必須包含 head 與 body 元素</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> html : String = <span class="string">&quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;First parse&lt;/title&gt;&lt;/head&gt;&quot;</span> + <span class="string">&quot;&lt;body&gt;&lt;p&gt;Parsed HTML into a doc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">val</span> doc : Document = Jsoup.parse(html);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>從 HTML 片段解析</strong></p>
+<p> 我們也可以將 HTML Body 元素下的部份元素進行分析，例如一部份的 Div 元素，如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> html : String = <span class="string">&quot;&lt;div&gt;&lt;p&gt;Lorem ipsum.&lt;/p&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">val</span> doc : Document = Jsoup.parseBodyFragment(html);</span><br><span class="line"><span class="keyword">val</span> body : Element = doc.body();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>利用 URL 載入 Document</strong></p>
+<p> 此方式應該是最常用的方式，利用網頁 url 直接進行分析，其中會使用到 connect 方法，此方法會我們建立一個新的連線，也可以在此方法設定請求細節，例如 cookie、userAgent、timeout等設定，如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> doc : Document = Jsoup.connect(<span class="string">&quot;http://example.com/&quot;</span>).<span class="keyword">get</span>();</span><br><span class="line"><span class="keyword">val</span> title : String = doc.title();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>利用 File 載入 Document</strong></p>
+<p> 我們也可以將 HTML 檔案進行讀檔分析，如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> input : File = new File(<span class="string">&quot;/tmp/input.html&quot;</span>);</span><br><span class="line"><span class="keyword">val</span> doc : Document = Jsoup.parse(input, <span class="string">&quot;UTF-8&quot;</span>, <span class="string">&quot;http://example.com/&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="資料解析方法"><a href="#資料解析方法" class="headerlink" title="資料解析方法"></a>資料解析方法</h2><p>在解析方法中，主要會推薦使用兩種方法，再看大家比較喜歡哪一種方式：</p>
+<ol>
+<li><p><strong>DOM 方法</strong></p>
+<p> 此方法就是利用 <code>DOM</code> 操作的寫法讓我們學習如何在取得的 <code>Document</code> 物件進行取得元素值 <code>Element</code>，範例如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> input : File = new File(<span class="string">&quot;/tmp/input.html&quot;</span>);</span><br><span class="line"><span class="keyword">val</span> doc : Document = Jsoup.parse(input, <span class="string">&quot;UTF-8&quot;</span>, <span class="string">&quot;http://example.com/&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> content : Element = doc.getElementById(<span class="string">&quot;content&quot;</span>);</span><br><span class="line"><span class="keyword">val</span> links : Elements = content.getElementsByTag(<span class="string">&quot;a&quot;</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">val</span> link : links) &#123;</span><br><span class="line">  <span class="keyword">val</span> linkHref : String = link.attr(<span class="string">&quot;href&quot;</span>);</span><br><span class="line">  <span class="keyword">val</span> linkText : String = link.text();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>尋找元素方法有以下幾種<ul>
+<li><code>[getElementById(String id)]</code> 利用 id 進行尋找</li>
+<li><code>[getElementsByTag(String tag)]</code> 利用 tag 進行尋找</li>
+<li><code>[getElementsByClass(String className)]</code> 利用 class 進行尋找</li>
+<li><code>[getElementsByAttribute(String key)]</code> 利用屬性值進行尋找</li>
+<li>也可以使用下面方法找出與元素有關聯的元素<ul>
+<li><code>[siblingElements()]</code></li>
+<li><code>[firstElementSibling()]</code></li>
+<li><code>[lastElementSibling()]</code></li>
+<li><code>[nextElementSibling()]</code></li>
+<li><code>[previousElementSibling()]</code></li>
+<li><code>[parent()]</code></li>
+<li><code>[children()]</code></li>
+<li><code>[child(int index)]</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>元素細節操作方法<ul>
+<li><code>[attr(String key)]</code> 利用元素 key 值取得元素屬性</li>
+<li><code>[attr(String key, String value)]</code> 設定元素屬性</li>
+<li><code>[attributes()]</code> 取得所有元素屬性</li>
+<li><code>[id()]</code>, <code>[className()]</code> and <code>[classNames()]</code></li>
+<li><code>[text()]</code> 取得元素文字資料</li>
+<li><code>[html()]</code> 取得元素 HTML 資料</li>
+<li><code>[tag()]</code> 、<code>[tagName()]</code> 取得 Tag 資料</li>
+</ul>
+</li>
+<li>控制 HTML 元素 與 文字<ul>
+<li><code>[append(String html)]</code>, <code>[prepend(String html)]</code></li>
+<li><code>[appendText(String text)]</code>, <code>[prependText(String text)]</code></li>
+<li><code>[appendElement(String tagName)]</code>, <code>[prependElement(String tagName)]</code></li>
+<li><code>[html(String value)]</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>選取器方法</strong></p>
+<p> 此方法類似於 <code>CSS</code>、<code>jQuery</code>的選取器使用方法，如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> input : File = new File(<span class="string">&quot;/tmp/input.html&quot;</span>);</span><br><span class="line"><span class="keyword">val</span> doc : Document = Jsoup.parse(input, <span class="string">&quot;UTF-8&quot;</span>, <span class="string">&quot;http://example.com/&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> links : Elements = doc.select(<span class="string">&quot;a[href]&quot;</span>);</span><br><span class="line"><span class="keyword">val</span> pngs : Elements = doc.select(<span class="string">&quot;img[src$=.png]&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> masthead : Element = doc.select(<span class="string">&quot;div.masthead&quot;</span>).first();</span><br><span class="line"><span class="keyword">val</span> resultLinks : Elements = doc.select(<span class="string">&quot;h3.r &gt; a&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>選取器（Selector）使用方式<ul>
+<li><code>tagname</code> 利用 Tag 找到元素，例如 a 元素</li>
+<li><code>#id</code>利用 # 符號加上 id 尋找元素</li>
+<li><code>.class</code> 利用 . 符號加上 class 值尋找元素</li>
+<li><code>[attribute]</code> 設定元素是否包含某個屬性進行進階條件尋找</li>
+<li><code>[attr=value]</code> 設定元素是否包含某個屬性欄位與對應值，例如 width=500</li>
+<li><code>[attr^=value]</code>, <code>[attr$=value]</code>, <code>[attr*=value]</code> 可針對屬性值使用模糊查詢</li>
+<li><code>[attr~=regex]</code>: 針對屬性值使用 regular expression，例如 <code>img[src~=(?i)\.(png|jpe?g)]</code></li>
+</ul>
+</li>
+<li>選取器組合（Selector combinations ）方式<ul>
+<li><code>el#id</code>   利用元素加上 id 值進行尋找，例如 <code>div#logo</code></li>
+<li><code>el.class</code> 利用元素加上 class 值進行尋找，例如 <code>div.masthead</code></li>
+<li><code>el[attr]</code> 利用元素搭配屬性值進行尋找，例如 <code>a[href]</code></li>
+<li>或是使用任何元素與屬性進行尋找，例如 <code>a[href].highlight</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="元素擷取細節"><a href="#元素擷取細節" class="headerlink" title="元素擷取細節"></a>元素擷取細節</h2><p>上面已經介紹如何取得 Document 物件與取得特定元素 Element，再來想要介紹如何取得元素Elements 的細節資料，例如元素的文字（Text）、連結（href）等欄位，如下範例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> html : String = <span class="string">&quot;&lt;p&gt;An &lt;a href=&#x27;http://example.com/&#x27;&gt;&lt;b&gt;example&lt;/b&gt;&lt;/a&gt; link.&lt;/p&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">val</span> doc : Document = Jsoup.parse(html);</span><br><span class="line"><span class="keyword">val</span> link : Element = doc.select(<span class="string">&quot;a&quot;</span>).first();</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> elementId = doc.id()</span><br><span class="line"><span class="keyword">val</span> elementTagName = doc.tagName()</span><br><span class="line"><span class="keyword">val</span> elementClassName = doc.className()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取得 An example link.</span></span><br><span class="line"><span class="keyword">val</span> text : String = doc.body().text();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取得 http://example.com/</span></span><br><span class="line"><span class="keyword">val</span> linkHref : String = link.attr(<span class="string">&quot;href&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取得 example</span></span><br><span class="line"><span class="keyword">val</span> linkText : String = link.text();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取得 &lt;a href=&quot;http://example.com/&quot;&gt;&lt;b&gt;example&lt;/b&gt;&lt;/a&gt;</span></span><br><span class="line"><span class="keyword">val</span> linkOuterH : String = link.outerHtml();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取得 &lt;b&gt;example&lt;/b&gt;</span></span><br><span class="line"><span class="keyword">val</span> linkInnerH : String = link.html();</span><br></pre></td></tr></table></figure>
+
+<h2 id="實作範例"><a href="#實作範例" class="headerlink" title="實作範例"></a>實作範例</h2><p>如本文開頭所述，這個範例是想了解鐵人賽還有多少參賽者還在一起努力，有多少鐵人朋友已經順利達陣完成30天目標，故我們從鐵人賽頁面的選手列表進行觀察，我們可以開啟瀏覽器的開發者工具了解網站每個元素的規則，這邊將觀察到的規則整理如下：</p>
+<p>(1) 開啟瀏覽器開發者工具，觀察每個元素如何進行命名，找出對應的規則<br><img src="https://ithelp.ithome.com.tw/upload/images/20200930/20121179Kz4OyH8kw1.png" alt="https://ithelp.ithome.com.tw/upload/images/20200930/20121179Kz4OyH8kw1.png"></p>
+<ul>
+<li>contestants-list clearfix 為每一個參賽者資料區塊</li>
+<li>contestants-list__title 參賽者參賽主題</li>
+<li>contestants-list__name 參賽者暱稱</li>
+<li>contestants-list__desc 主題描述</li>
+<li>contestants-expect__number 敲碗數</li>
+<li>team-dashboard__day 挑戰天數</li>
+<li>contestants-group contestants-list__group 挑戰組別</li>
+<li>contestants-list__date 報名日期</li>
+<li>team-dashboard__box team-progress–challenge 正在挑戰的樣式</li>
+<li>team-dashboard__box team-progress–fail 挑戰失敗的樣式</li>
+</ul>
+<p>(2) 觀察出關鍵元素－正在挑戰 / 挑戰失敗的樣式差異，如下圖<br><img src="https://ithelp.ithome.com.tw/upload/images/20200930/20121179ljsaiEjRke.png" alt="https://ithelp.ithome.com.tw/upload/images/20200930/20121179ljsaiEjRke.png"></p>
+<p>(3) 接下來，我們利用上述整理的規則進行撰寫程式，說明如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">&quot;/api&quot;</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HomeController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(<span class="meta-string">&quot;/getIronManData&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getData</span><span class="params">()</span></span>: HashMap&lt;String, Any&gt; &#123;</span><br><span class="line">        <span class="comment">// 初始化 API 輸出集合</span></span><br><span class="line">        <span class="keyword">val</span> response = HashMap&lt;String, Any&gt;()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 設定爬蟲會用到的基本參數</span></span><br><span class="line">        <span class="comment">// 鐵人賽網站連結</span></span><br><span class="line">        <span class="keyword">val</span> ironManUrl: String = <span class="string">&quot;https://ithelp.ithome.com.tw/2020-12th-ironman/signup/list&quot;</span></span><br><span class="line">        <span class="keyword">var</span> document = Jsoup.connect(ironManUrl).<span class="keyword">get</span>()</span><br><span class="line">        <span class="comment">// 取得全部網站註冊人數</span></span><br><span class="line">        <span class="keyword">val</span> totalRegisterPerson = document.select(<span class="string">&quot;.contestants-num&quot;</span>)[<span class="number">0</span>].text().replace(<span class="string">&quot;報名數 &quot;</span>, <span class="string">&quot;&quot;</span>).toInt()</span><br><span class="line">        <span class="comment">// 取得每頁參加者數量</span></span><br><span class="line">        <span class="keyword">val</span> onePageCount = document.select(<span class="string">&quot;.contestants-list&quot;</span>).size</span><br><span class="line">        <span class="comment">// 取得全部頁面數量</span></span><br><span class="line">        <span class="keyword">val</span> totalPageCount = totalRegisterPerson / onePageCount + <span class="number">1</span></span><br><span class="line">        <span class="comment">// 初始化參數</span></span><br><span class="line">        <span class="keyword">var</span> challengingCount = <span class="number">0</span> <span class="comment">// 仍正在挑戰中的人數</span></span><br><span class="line">        <span class="keyword">var</span> challengeSuccessCount = <span class="number">0</span> <span class="comment">// 挑戰成功的人數</span></span><br><span class="line">        <span class="keyword">var</span> challengeFailedCount = <span class="number">0</span> <span class="comment">// 挑戰失敗的人數</span></span><br><span class="line">        <span class="keyword">var</span> unchallengedCount = <span class="number">0</span> <span class="comment">// 已經報名，但未開賽的人數</span></span><br><span class="line">        <span class="comment">// 初始化每日進度集合</span></span><br><span class="line">        <span class="keyword">val</span> daysCount = HashMap&lt;String, <span class="built_in">Int</span>&gt;()</span><br><span class="line">        <span class="keyword">for</span> (index <span class="keyword">in</span> <span class="number">0</span>..<span class="number">30</span>) daysCount[index.toString()] = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 帶入每頁頁碼參數</span></span><br><span class="line">        <span class="keyword">for</span> (page <span class="keyword">in</span> <span class="number">1</span>..totalPageCount) &#123;</span><br><span class="line">            <span class="comment">// 連結加入頁碼參數</span></span><br><span class="line">            document = Jsoup.connect(<span class="string">&quot;<span class="variable">$ironManUrl</span>?page=<span class="variable">$page</span>&quot;</span>).<span class="keyword">get</span>()</span><br><span class="line">            <span class="comment">// 查詢此頁參加者區塊數量</span></span><br><span class="line">            <span class="keyword">val</span> cardSize = document.select(<span class="string">&quot;.contestants-list&quot;</span>).size</span><br><span class="line">            <span class="comment">// 帶入此頁區塊數量</span></span><br><span class="line">            <span class="keyword">for</span> (index <span class="keyword">in</span> <span class="number">0</span> until cardSize) &#123;</span><br><span class="line">                <span class="comment">// 取得區塊元素 Element</span></span><br><span class="line">                <span class="keyword">val</span> item = document.select(<span class="string">&quot;.contestants-list&quot;</span>)</span><br><span class="line">                <span class="comment">// 取得挑戰天數資料</span></span><br><span class="line">                <span class="keyword">val</span> challengeDay = item.select(<span class="string">&quot;.team-dashboard__day&quot;</span>)[index].text().replace(<span class="string">&quot;DAY &quot;</span>, <span class="string">&quot;&quot;</span>).replace(<span class="string">&quot;尚未開賽&quot;</span>, <span class="string">&quot;0&quot;</span>).toString()</span><br><span class="line">                <span class="comment">// 將該挑戰天數的挑賽人數 + 1</span></span><br><span class="line">                daysCount[challengeDay] = daysCount[challengeDay]!!.toInt().plus(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 取得挑戰狀態</span></span><br><span class="line">                <span class="keyword">val</span> progressByChallengeStatus = ! item.select(<span class="string">&quot;.team-progress--challenge&quot;</span>).isEmpty()</span><br><span class="line">                <span class="keyword">val</span> progressByFailStatus = ! item.select(<span class="string">&quot;.team-progress--fail&quot;</span>).isEmpty()</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 計算挑戰成功、挑戰中、挑戰失敗、已報名未挑戰人數</span></span><br><span class="line">                <span class="keyword">if</span> (progressByChallengeStatus &amp;&amp; !progressByFailStatus &amp;&amp; challengeDay.toInt() == <span class="number">30</span>) challengeSuccessCount++</span><br><span class="line">                <span class="keyword">if</span> (progressByChallengeStatus &amp;&amp; !progressByFailStatus &amp;&amp; challengeDay.toInt() != <span class="number">30</span>) challengingCount++</span><br><span class="line">                <span class="keyword">if</span> (!progressByChallengeStatus &amp;&amp; progressByFailStatus &amp;&amp; challengeDay.toInt() == <span class="number">0</span>) unchallengedCount++</span><br><span class="line">                <span class="keyword">if</span> (!progressByChallengeStatus &amp;&amp; progressByFailStatus &amp;&amp; challengeDay.toInt() &gt; <span class="number">0</span>) challengeFailedCount++</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 儲存 API 結果進行輸出</span></span><br><span class="line">        response[<span class="string">&quot;全部參賽人數&quot;</span>] = totalRegisterPerson</span><br><span class="line">        response[<span class="string">&quot;挑戰成功人數&quot;</span>] = challengeSuccessCount</span><br><span class="line">        response[<span class="string">&quot;挑戰進行人數&quot;</span>] = challengingCount</span><br><span class="line">        response[<span class="string">&quot;挑戰失敗人數&quot;</span>] = challengeFailedCount</span><br><span class="line">        response[<span class="string">&quot;挑戰進度文章數量（天/篇）&quot;</span>] = daysCount</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> response</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>(4) 接著執行程式 ，會產生如下 API 爬蟲結果：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200930/201211794tbE04dZuE.png" alt="https://ithelp.ithome.com.tw/upload/images/20200930/201211794tbE04dZuE.png"></p>
+<p>(5) 接著，當我們完成爬蟲程式並取得資料結果，後續其實就可以做很多事情，像是資料分析、資料視覺化等動作，下面也是我們針對結果產生出圖表，可以從圖表觀察出目前比賽進度的人數比例：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200930/2012117934bBuQXbif.png" alt="https://ithelp.ithome.com.tw/upload/images/20200930/2012117934bBuQXbif.png"></p>
+<p>以上是 JSOUP 爬蟲介紹，建議大家可以練習實作看看，爬蟲程式在實作上不難，但卻可以讓我們在後續實作出很多很有趣的應用。</p>
+<h2 id="Rerference"><a href="#Rerference" class="headerlink" title="Rerference"></a>Rerference</h2><ul>
+<li>[官方文件] <a target="_blank" rel="noopener" href="https://jsoup.org/cookbook/">Jsoup cookbook</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-20/" title="[Day 20] 遠征 Kotlin × Spring Boot 使用分層架構 Layered Architecture"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-22/" title="[Day 22] 遠征 Kotlin × Spring Boot 介紹單元測試 (1)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-21/';
+        
+        this.page.identifier = 'ironman-2020-21';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 23] 遠征 Kotlin × Spring Boot 介紹單元測試 (2) | Devin Blog</title>
+  <meta name="description" content="上一篇我們完成了 Service 的單元測試，而這篇我們要來測試 Controller 單元測試，在前面架構章節有提到 Controller 是負責處理 Http 請求、路由處理、身份驗證與Json資料轉換等處理內容，而在測試我們為了要處理這些內容，會需要使用到兩個新的測試物件，@WebMvcTest 負責處理 Http請求與路由處理，ObjectMapper 負責協助我們將物件轉換為 Json">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 23] 遠征 Kotlin × Spring Boot 介紹單元測試 (2)">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-23/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="上一篇我們完成了 Service 的單元測試，而這篇我們要來測試 Controller 單元測試，在前面架構章節有提到 Controller 是負責處理 Http 請求、路由處理、身份驗證與Json資料轉換等處理內容，而在測試我們為了要處理這些內容，會需要使用到兩個新的測試物件，@WebMvcTest 負責處理 Http請求與路由處理，ObjectMapper 負責協助我們將物件轉換為 Json">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201002/20121179khZSQzYBOb.png">
+<meta property="article:published_time" content="2020-10-11T11:13:50.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:13:50.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20201002/20121179khZSQzYBOb.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-23/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-23" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 23] 遠征 Kotlin × Spring Boot 介紹單元測試 (2)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-23/" class="article-date">
+	  <time datetime="2020-10-11T11:13:50.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-23/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>上一篇我們完成了 Service 的單元測試，而這篇我們要來測試 <code>Controller</code> 單元測試，在前面<a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/articles/10246576">架構章節</a>有提到 Controller 是<strong>負責處理 Http 請求、路由處理、身份驗證與Json資料轉換等處理內容</strong>，而在測試我們為了要處理這些內容，會需要使用到兩個新的測試物件，<code>@WebMvcTest</code> 負責處理 Http請求與路由處理，<code>ObjectMapper</code> 負責協助我們將物件轉換為 Json 資料，以下直接進入實作觀察：</p>
+<ol>
+<li><p>在測試Test資料夾新增測試檔案－<code>TestStudentController</code>，並替測試類別設定參數（<code>@WebMvcTest</code>、<code>@MockBean</code>、<code>@Autowired</code>、<code>ObjectMapper</code>），範例如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebMvcTest(StudentController::class)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestStudentController</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@MockBean</span></span><br><span class="line">    <span class="keyword">lateinit</span> <span class="keyword">var</span> studentServiceImpl: StudentServiceImpl</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">lateinit</span> <span class="keyword">var</span> mockMvc: MockMvc</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> objectMapper = ObjectMapper()</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>加入測試方法</p>
+<ul>
+<li><p><strong>取得所有學生資料 API</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">shouldGetAllStudentWhenCallMethod</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> expectedResult : MutableList&lt;Student&gt; = mutableListOf&lt;Student&gt;()</span><br><span class="line">    expectedResult.add(Student(<span class="number">1</span>, <span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;devin@gmail.com&quot;</span>))</span><br><span class="line">    expectedResult.add(Student(<span class="number">2</span>, <span class="string">&quot;Eric&quot;</span>, <span class="string">&quot;eric@gmail.com&quot;</span>))</span><br><span class="line">    given(studentServiceImpl.findAllStudent()).willReturn(expectedResult)</span><br><span class="line"></span><br><span class="line">    mockMvc.perform(</span><br><span class="line">            <span class="keyword">get</span>(<span class="string">&quot;/api/students&quot;</span>)</span><br><span class="line">                  .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">    ).andExpect(status().isOk)</span><br><span class="line">     .andExpect(content().contentType(MediaType.APPLICATION_JSON))</span><br><span class="line">   .andExpect(content().string(objectMapper.writeValueAsString(expectedResult)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>取得單一學生資料 API</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">shouldGetOneStudentWhenCallMethodById</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> expectedResult : MutableList&lt;Student&gt; = mutableListOf&lt;Student&gt;()</span><br><span class="line">    expectedResult.add(Student(<span class="number">1</span>, <span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;devin@gmail.com&quot;</span>))</span><br><span class="line">                 given(studentServiceImpl.findByStudentName(<span class="string">&quot;Devin&quot;</span>)).willReturn(expectedResult)</span><br><span class="line"></span><br><span class="line">    mockMvc.perform(</span><br><span class="line">            post(<span class="string">&quot;/api/students/search&quot;</span>)</span><br><span class="line">                   .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">                   .param(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;Devin&quot;</span>)</span><br><span class="line">    ).andExpect(status().isOk)</span><br><span class="line">     .andExpect(content().contentType(MediaType.APPLICATION_JSON))</span><br><span class="line">   .andExpect(content().string(objectMapper.writeValueAsString(expectedResult)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>建立學生資料 API</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">shouldGetNewStudentWhenCallMethodByStudent</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> expectedResult = Student( <span class="number">1</span>, <span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;devin@gmail.com&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> requestParameter = Student( name = <span class="string">&quot;Devin&quot;</span>, email = <span class="string">&quot;devin@gmail.com&quot;</span>)</span><br><span class="line">    given(studentServiceImpl.addStudent(requestParameter)).willReturn(expectedResult)</span><br><span class="line"></span><br><span class="line">    mockMvc.perform(</span><br><span class="line">            post(<span class="string">&quot;/api/students&quot;</span>)</span><br><span class="line">                   .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">                   .content(objectMapper.writeValueAsString(requestParameter))</span><br><span class="line">    ).andExpect(status().isOk)</span><br><span class="line">     .andExpect(content().contentType(MediaType.APPLICATION_JSON))</span><br><span class="line">   .andExpect(content().string(objectMapper.writeValueAsString(expectedResult)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>更新學生資料 API</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">shouldUpdatedStudentWhenCallMethodByStudent</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> expectedResult = Student(<span class="number">1</span>, <span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;devin@gmail.com&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> requestParameter = Student(<span class="number">1</span>, <span class="string">&quot;Eric&quot;</span>, <span class="string">&quot;eric@gmail.com&quot;</span>)</span><br><span class="line">    given(studentServiceImpl.findByStudentId(<span class="number">1</span>)).willReturn(requestParameter)</span><br><span class="line">    given(studentServiceImpl.updateStudent(requestParameter)).willReturn(expectedResult)</span><br><span class="line"></span><br><span class="line">    mockMvc.perform(</span><br><span class="line">            put(<span class="string">&quot;/api/students/1&quot;</span>)</span><br><span class="line">                  .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">                  .content(objectMapper.writeValueAsString(requestParameter))</span><br><span class="line">    ).andExpect(status().isOk)</span><br><span class="line">     .andExpect(content().contentType(MediaType.APPLICATION_JSON))</span><br><span class="line">   .andExpect(content().string(objectMapper.writeValueAsString(expectedResult)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>更新學生信箱資料 API</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">shouldUpdatedEmailWhenCallMethodByStudent</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> expectedResult = Student(<span class="number">1</span>, <span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;devin@gmail.com&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> requestParameter = Student(<span class="number">1</span>, <span class="string">&quot;Devin&quot;</span>, <span class="string">&quot;test@gmail.com&quot;</span>)</span><br><span class="line">    given(studentServiceImpl.findByStudentId(<span class="number">1</span>)).willReturn(requestParameter     given(studentServiceImpl.updateStudentEmail(requestParameter)).willReturn(expectedResult)</span><br><span class="line"></span><br><span class="line">    mockMvc.perform(</span><br><span class="line">            patch(<span class="string">&quot;/api/students/1&quot;</span>)</span><br><span class="line">                    .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">                    .content(objectMapper.writeValueAsString(requestParameter))</span><br><span class="line">    ).andExpect(status().isOk)</span><br><span class="line">     .andExpect(content().contentType(MediaType.APPLICATION_JSON))</span><br><span class="line">   .andExpect(content().string(objectMapper.writeValueAsString(expectedResult)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>刪除學生資料成功 API</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">shouldGetIsNotContentStatusWhenDeleteSuccess</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> expectedResult = <span class="literal">true</span></span><br><span class="line">    given(studentServiceImpl.deleteStudent(<span class="number">1</span>)).willReturn(expectedResult)</span><br><span class="line"></span><br><span class="line">    mockMvc.perform(</span><br><span class="line">            delete(<span class="string">&quot;/api/students/1&quot;</span>)</span><br><span class="line">                     .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">    ).andExpect(status().isNoContent)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>刪除學生資料失敗 API</strong></p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">shouldGetBadRequestStatusWhenDeleteFailed</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> expectedResult = <span class="literal">false</span></span><br><span class="line">    given(studentServiceImpl.deleteStudent(<span class="number">1</span>)).willReturn(expectedResult)</span><br><span class="line"></span><br><span class="line">    mockMvc.perform(</span><br><span class="line">            delete(<span class="string">&quot;/api/students/1&quot;</span>)</span><br><span class="line">                     .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">    ).andExpect(status().isBadRequest)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+<p>最後我們利用下圖來觀察專案的測試覆蓋率（Test Coverage）發現都是 100%，表示我們已經將每一段程式都有進行測試，但這邊建議測試覆蓋率只是一個參考數值，頂多只能了解自己有沒有地方少做測試，這與專案會不會有問題沒有絕對關係，以前有待過專案測試覆蓋率要求100%的團隊，也有待過測試覆蓋率要求 70-80% 左右的團隊，但個人覺得最主要還是在於我們是否有將產品核心相關的功能盡可能做到測試，畢竟這些功能才是與使用者有高度相關的。</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20201002/20121179khZSQzYBOb.png" alt="https://ithelp.ithome.com.tw/upload/images/20201002/20121179khZSQzYBOb.png"></p>
+<blockquote>
+<p>此文章有提供範例程式碼在 <a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-junit-example">Github</a> 供大家參考</p>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-22/" title="[Day 22] 遠征 Kotlin × Spring Boot 介紹單元測試 (1)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-24/" title="[Day 24] 遠征 Kotlin × Spring Boot 介紹 Template Engine (1)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-23/';
+        
+        this.page.identifier = 'ironman-2020-23';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 18] 遠征 Kotlin × Spring Boot 使用 RESTful API (1) | Devin Blog</title>
+  <meta name="description" content="前面兩篇我們已經介紹完資料庫操作，可能有朋友會疑問 API 細節是如何進行實現，為什麼我們在 程式中加入 @RestController、@GetMapping 就可以實作一個 API 進行呼叫，甚至好奇什麼是 API，這篇將來解釋 API 實作細節並介紹 RESTful API 設計風格。 API 的基本介紹我想可以直接參考這篇文章，作者提到的 API 概念非常清晰，我們整理內容大概描述，應用程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 18] 遠征 Kotlin × Spring Boot 使用 RESTful API (1)">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-18/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="前面兩篇我們已經介紹完資料庫操作，可能有朋友會疑問 API 細節是如何進行實現，為什麼我們在 程式中加入 @RestController、@GetMapping 就可以實作一個 API 進行呼叫，甚至好奇什麼是 API，這篇將來解釋 API 實作細節並介紹 RESTful API 設計風格。 API 的基本介紹我想可以直接參考這篇文章，作者提到的 API 概念非常清晰，我們整理內容大概描述，應用程">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200927/2012117998LYJt5x5y.png">
+<meta property="article:published_time" content="2020-10-11T11:16:22.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:16:22.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200927/2012117998LYJt5x5y.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-18/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-18" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 18] 遠征 Kotlin × Spring Boot 使用 RESTful API (1)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-18/" class="article-date">
+	  <time datetime="2020-10-11T11:16:22.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-18/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>前面兩篇我們已經介紹完資料庫操作，可能有朋友會疑問 API 細節是如何進行實現，為什麼我們在 程式中加入 <code>@RestController</code>、<code>@GetMapping</code> 就可以實作一個 API 進行呼叫，甚至好奇什麼是 API，這篇將來解釋 API 實作細節並介紹 RESTful API 設計風格。</p>
+<p>API 的基本介紹我想可以直接參考<a target="_blank" rel="noopener" href="https://medium.com/codingbar/api-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E9%BA%BC-%E7%94%A8%E7%99%BD%E8%A9%B1%E6%96%87%E5%B8%B6%E4%BD%A0%E8%AA%8D%E8%AD%98-95f65a9cfc33">這篇文章</a>，作者提到的 <code>API</code> 概念非常清晰，我們整理內容大概描述，<code>應用程式介面</code>（Application Programming Interface, API）是<strong>扮演應用程式與應用程式之間溝通的橋樑，以幫助使用者達到目的為目標導向，讓使用者在操作 API 的過程，不需要知道內部程式運作的邏輯，只要告訴 API 你的需求，即可達到目的</strong>。</p>
+<p>而 API 常見設計的風格有 <code>REST</code>、<code>GraphQL</code>、<code>gRPC</code>和 <code>Webhooks</code>，我們在這篇會先提到目前普遍率最高的 <code>RESTful API</code>來介紹。REST 全名為 Representational State Transfer( 表現層狀態轉移)，是此段開頭提到的其中一種 API 設計風格，而 RESTful 只是將 REST 轉為形容詞，一般在設計 Restful API 我們會通常會考慮四個重要觀念，如下：</p>
+<ol>
+<li><p><strong>Nouns 名詞</strong></p>
+<p> API Endpoint 必須使用 <code>名詞</code> 進行定義 URL，而每個資源都要<code>保持唯一性</code>，資源<code>採用複數命名</code>，例如學生資料就是 /students</p>
+</li>
+<li><p><strong>Verbs 動詞</strong></p>
+<p> 利用 <code>Verbs 動詞</code> 對 <code>Nouns 名詞</code> (資源 URL) 進行操作，在 HTTP 1.1 的實作就是 <code>HTTP Method</code>，即 Get、Post、Put、Delete、Patch等，例如使用 Get Method 取得學生資料、用 Delete Method 刪除學生資料，動詞分別描述如下：</p>
+<ul>
+<li>Get 讀取資源</li>
+<li>Post 新增替源或作為utility API，例如檢查帳號是否存在</li>
+<li>Delete 刪除資源</li>
+<li>Put 替換單一資源</li>
+<li>Patch 更新資源部份內容</li>
+</ul>
+</li>
+<li><p><strong>Content Types 資源呈現方式</strong></p>
+<p> 當我們如果要取得某一個 API 的資料，此資料格式可以有 HTML、 XML、JSON 等格式，同樣的 URL 資源可以有不同型態的表現方式。</p>
+</li>
+<li><p><strong>HTTP 回傳狀態碼</strong></p>
+<p> API 回傳結果應使用正確的 HTTP 狀態碼，這樣呼叫者才可以了解 API 實際運行狀況，這邊整理常見的狀態碼，若要了解完整狀態碼說明可參考 wiki－<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">List of HTTP status codes</a>：</p>
+<ul>
+<li><p><strong>2xx 成功運行</strong></p>
+<ul>
+<li>200－OK 成功回傳結果</li>
+<li>201－Created 資源新增成功</li>
+<li>202－Accepted 請求接受，但結果還在處理</li>
+<li>204－No Content 沒有回應任何內容</li>
+</ul>
+</li>
+<li><p><strong>3xx 重新導向</strong></p>
+<ul>
+<li>301－Moved Permanently 重新導向URI</li>
+<li>304－Not Modified 請求資源並未修改</li>
+</ul>
+</li>
+<li><p><strong>4xx 用戶端錯誤</strong></p>
+<ul>
+<li>400－Bad Request 錯誤請求</li>
+<li>401－Unauthorized 使用者尚未通過身份驗證</li>
+<li>403－Forbidden 用戶端被禁止使用此請求</li>
+<li>404－Not Found 請求資源不存在</li>
+<li>405－Method Not Allowed 不支援請求的 Http method</li>
+<li>414－Url Too Long URI太長</li>
+</ul>
+</li>
+<li><p><strong>5xx 伺服器錯誤</strong></p>
+<ul>
+<li>500－Internal Server Error 內部伺服器錯誤</li>
+</ul>
+<p>這邊也推薦大家可以參考 <a target="_blank" rel="noopener" href="https://www.loggly.com/blog/http-status-code-diagram/">HTTP DECISION DIAGRAM</a> 來了解每個 Http 狀態運行的活動圖，下圖僅擷取 Request 時的活動圖給予大家進行參考，如果有興趣可以前往觀看完整版。<br><img src="https://ithelp.ithome.com.tw/upload/images/20200927/2012117998LYJt5x5y.png" alt="https://ithelp.ithome.com.tw/upload/images/20200927/2012117998LYJt5x5y.png"></p>
+</li>
+</ul>
+</li>
+</ol>
+<p>而我們在 Controlelr 中加入的 <code>@RestController</code> 其實是 <code>@Controller</code> + <code>@ResponseBody</code> 組成，@Controller 是將標注（Annotation）的類別注入到 Spring IOC 容器，會讓該類別在運行中會被實例化（Instance），表示該類別具有 Controller 功用，而 @ResponseBody 會將我們函數所回傳的結果轉換為 JSON 格式傳送給 client 端。</p>
+<p>這篇文章希望大家能夠先將API概念與RESTful設計概念了解清楚，明日將會介紹前面實作的專案加入 RESTful API 設計風格後的成果</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://medium.com/codingbar/api-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E9%BA%BC-%E7%94%A8%E7%99%BD%E8%A9%B1%E6%96%87%E5%B8%B6%E4%BD%A0%E8%AA%8D%E8%AD%98-95f65a9cfc33">API 到底是什麼？ 用白話文帶你認識</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.toright.com/posts/5523/restful-api-%E8%A8%AD%E8%A8%88%E6%BA%96%E5%89%87%E8%88%87%E5%AF%A6%E5%8B%99%E7%B6%93%E9%A9%97.html">RESTful API 設計準則與實務經驗</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.loggly.com/blog/http-status-code-diagram/">HTTP Status Codes Decision Diagram – Infographic</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-17/" title="[Day 17] 遠征 Kotlin × 使用 Spring Data JPA 操作資料庫 (2)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-19/" title="[Day 19] 遠征 Kotlin × Spring Boot 使用 RESTful API (2)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-18/';
+        
+        this.page.identifier = 'ironman-2020-18';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

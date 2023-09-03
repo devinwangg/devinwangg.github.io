@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 09] 遠征 Kotlin × 例外處理 | Devin Blog</title>
+  <meta name="description" content="這章要來為大家介紹例外處理（Exception Handing），但其實在介紹例外處理之前，想先和大家介紹錯誤（Error）與例外（Exception）的差別，避免大家搞混兩者。 錯誤與例外錯誤（Error） 通常是指程式在正常運行之下，可能受到硬體資源影響所導致的錯誤，進而導致Java虛擬機（JVM）處於一種不正常且不可恢復的狀態，例如記憶體溢位 OutOfMemoryError。而像 Erro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 09] 遠征 Kotlin × 例外處理">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-09/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="這章要來為大家介紹例外處理（Exception Handing），但其實在介紹例外處理之前，想先和大家介紹錯誤（Error）與例外（Exception）的差別，避免大家搞混兩者。 錯誤與例外錯誤（Error） 通常是指程式在正常運行之下，可能受到硬體資源影響所導致的錯誤，進而導致Java虛擬機（JVM）處於一種不正常且不可恢復的狀態，例如記憶體溢位 OutOfMemoryError。而像 Erro">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200918/20121179YwH2Nc5L6F.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200918/201211793qMWWMOQ6p.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200918/20121179XmMf5stzaU.png">
+<meta property="article:published_time" content="2020-10-11T11:21:46.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:21:46.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200918/20121179YwH2Nc5L6F.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-09/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-09" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 09] 遠征 Kotlin × 例外處理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-09/" class="article-date">
+	  <time datetime="2020-10-11T11:21:46.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-09/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>這章要來為大家介紹<code>例外處理（Exception Handing）</code>，但其實在介紹例外處理之前，想先和大家介紹<code>錯誤（Error）</code>與<code>例外（Exception）</code>的差別，避免大家搞混兩者。</p>
+<h2 id="錯誤與例外"><a href="#錯誤與例外" class="headerlink" title="錯誤與例外"></a>錯誤與例外</h2><p><code>錯誤（Error）</code> 通常是指<strong>程式在正常運行之下，可能受到硬體資源影響所導致的錯誤，進而導致Java虛擬機（JVM）處於一種不正常且不可恢復的狀態</strong>，例如記憶體溢位 <code>OutOfMemoryError</code>。而像 Error 這類型的錯誤在Java 或 Kotlin 都是使用 <code>Error</code> 類別表示，不同錯誤類別代表著不同錯誤，且每個錯誤類別都是繼承自 <code>Error</code> 類別，例如<code>StackOverflowError</code>、<code>OutOfMemoryError</code>。</p>
+<p><code>例外（Exception）</code>通常是指<strong>程式的語法錯誤或語意錯誤</strong>，即程式在編譯時期（Compile Time）和執行時期（Execute Time）出現的錯誤，此類錯誤我們可以稱為例外（Exception），在Java 或 Kotlin 都是使用 <code>Exception</code> 類別來表示，而 Exception 又可分為 <code>Checked Exception</code> （已檢查例外）與 <code>Unchecked Exception</code>（未檢查例外），<code>Checked Exception</code> 是指程式碼必須明確配合例外檢查方法（例如 try/catch ）進行檢查，否則編譯時期會無法編譯；<code>Unchecked Exception</code> 是指開發者可以自行判斷程式碼是否需要加上例外檢查，在編譯時期不會強制要求。</p>
+<p>而在 Java 與 Kotlin 中， <code>Error</code> 與 <code>Exception</code> 都是繼承自 <code>Throwable</code> 類別，也只有 <code>Throwable</code> 類別才能夠拋出（throw）錯誤，類別關係可參考下圖：</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200918/20121179YwH2Nc5L6F.png" alt="https://ithelp.ithome.com.tw/upload/images/20200918/20121179YwH2Nc5L6F.png"><br>圖片引用自 <a target="_blank" rel="noopener" href="http://www.instanceofjava.com/2015/08/difference-between-error-and-exception-java-example-program.html">instanceofjava 文章</a></p>
+<h2 id="例外處理介紹"><a href="#例外處理介紹" class="headerlink" title="例外處理介紹"></a>例外處理介紹</h2><p>接下來，我們來認識什麼是例外處理（Exception Handing ），它通常是指<strong>我們針對程式執行時所發生的例外狀況進行有效處理的方法</strong>，若我們能夠妥善處理例外情形，則可以提高程式的強健度，讓程式即便發生錯誤也能正常執行，不會因為某一個錯誤而導致整個軟體崩潰，保持良好的軟體使用體驗。</p>
+<p>而 Kotlin 也是一門編譯型程式語言，即程式碼會先編譯成機器語言，再由編譯器進行執行。在編譯階段（Compiler Time）時，編譯器會檢查程式碼是否符合特定要求，確定沒問題後再進行編譯，例如在變數章節我們所提到的空值檢查機制，編譯器會幫我們判斷是否將 null 值指派給非空類型。</p>
+<p>在文章開頭，我們有介紹什麼是例外（Exception），例外又可分為兩種類型，即 <code>Checked Exception</code> （已檢查例外）與 <code>Unchecked Exception</code>（未檢查例外），在 Java 世界中，兩種例外類型都有支援，<strong>但在 Kotlin 世界中，本身不支援 Checked Exception 類型</strong>（<a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/reference/exceptions.html">可參考官方文件說明</a>），所以當我們撰寫的程式碼有可能拋出 Exception，在編譯時期都會直接通過，在執行時期才會發現。</p>
+<p>可能有些人會好奇，Kotlin 取消 <code>Checked Exception</code> 類型會不會容易造成問題發生，Kotlin 官方其實也有做出回應並引用 Bruce Eckel 的論述：</p>
+<blockquote>
+<p>Examination of small programs leads to the conclusion that requiring exception specifications could both enhance developer productivity and enhance code quality, but experience with large software projects suggests a different result – decreased productivity and little or no increase in code quality.</p>
+</blockquote>
+<p>當初 Kotlin 在設計考量時也是參考過去 Java 的開發經驗，設計讓部份錯誤檢查可以從執行時期提前到編譯時期發現，能夠讓我們更早發現程式問題，防患於未然，這也是選用 Kotlin 設計程式的優勢之一，假設保留<code>Checked Exception</code> 類型的話，當開發者在大型軟體專案中使用過多時，大部份開發上只會造成程式碼可讀性變差與程式碼品質下降。</p>
+<h2 id="例外處理方法－-try-catch-finally"><a href="#例外處理方法－-try-catch-finally" class="headerlink" title="例外處理方法－ try..catch..finally"></a>例外處理方法－ try..catch..finally</h2><p>上面我們介紹了例外處理的基本概念，我們再來介紹 Kotlin 處理例外狀況的方法，一般程式語言都是利用 <code>try..catch..finally</code> 來處理例外狀況，而 Kotlin 也不例外，使用方法與範例如下：</p>
+<p>使用方法說明：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 預期可能會發生錯誤的程式碼</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (exception: SomeException) &#123;</span><br><span class="line">    <span class="comment">// 當發生錯誤時，則執行這裡的程式碼</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="comment">// 最後執行的程式碼區塊，此區塊可以忽略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我們利用一個簡單範例，當運算式為 <strong>數字 1</strong> 除 <strong>數字 0</strong>時，程式會出現 ArithmeticException 類型錯誤：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        println(<span class="string">&quot;1.執行程式&quot;</span>)</span><br><span class="line">        <span class="keyword">val</span> <span class="keyword">data</span> = <span class="number">1</span> / <span class="number">0</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (exception: ArithmeticException) &#123;</span><br><span class="line">        println(<span class="string">&quot;2.發生錯誤&quot;</span>)</span><br><span class="line">        println(exception)</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        println(<span class="string">&quot;3.最後執行的程式碼&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 此程式會輸出以下結果</span></span><br><span class="line"><span class="comment">// 1.執行程式</span></span><br><span class="line"><span class="comment">// 2.發生錯誤</span></span><br><span class="line"><span class="comment">// java.lang.ArithmeticException: / by zero</span></span><br><span class="line"><span class="comment">// 3.最後執行的程式碼</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="例外處理方法－主動拋出例外-throw"><a href="#例外處理方法－主動拋出例外-throw" class="headerlink" title="例外處理方法－主動拋出例外 throw"></a>例外處理方法－主動拋出例外 throw</h2><p>Kotlin 也可以允許開發者主動拋例外物件，會由 <code>throw</code> 運算子所觸發，拋出異常就代表程式若要繼續執行，必須先解決這個問題才能夠正常繼續執行，例如以下範例，我們有一個函數是判斷數值是否符合正整數，如果不符合則主動拋出例外錯誤：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200918/201211793qMWWMOQ6p.png" alt="https://ithelp.ithome.com.tw/upload/images/20200918/201211793qMWWMOQ6p.png"></p>
+<h2 id="例外處理方法－自訂例外錯誤類別"><a href="#例外處理方法－自訂例外錯誤類別" class="headerlink" title="例外處理方法－自訂例外錯誤類別"></a>例外處理方法－自訂例外錯誤類別</h2><p>我們也可以自定義一個例外錯誤類別，宣告一個類別並繼承 <code>Exception</code> 類別即可，自定義例外錯誤類別可以讓我們在除錯時更清楚拋出的資訊是屬於哪一種問題，例如以下範例：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200918/20121179XmMf5stzaU.png" alt="https://ithelp.ithome.com.tw/upload/images/20200918/20121179XmMf5stzaU.png"></p>
+<h2 id="責任分工"><a href="#責任分工" class="headerlink" title="責任分工"></a>責任分工</h2><p>上面是我們一般會對於處理例外狀況所撰寫的程式方法，但實際上在這三個區塊會有各自要處理的責任，這邊稍微簡單說明：</p>
+<ol>
+<li><p><code>try</code> 區塊除了提到必須負責實作業務需求之外，也<strong>必須負責準備錯誤發生時的狀態回復方法</strong>，建立將程式狀態回復至發生錯誤之前的方法</p>
+</li>
+<li><p><code>catch</code> 區塊除了回報錯誤狀況以外，其實還要<strong>身兼錯誤的對應處理或重試其他替代方案</strong>，例如上面範例，當使用者輸入為錯誤數值時，是否可以藉由 Catch 提供錯誤提示給予使用者，給予使用者選擇重試或取消此計算功能</p>
+</li>
+<li><p><code>finally</code> 區塊則是<strong>擔任釋放資源與回報發生錯誤例外的角色</strong>，假設我們執行的程式碼是與資料庫溝通的程式，在 finally 則是必須釋放資料庫連線。</p>
+</li>
+</ol>
+<p>此篇文章介紹了例外處理的基本概念與使用方法，其實例外處理要考量的地方還有許多，可能沒辦法利用一篇文章進行詳細說明，後續在 Spring Boot 章節會再補充例外處理的方法，而在實務開發上，團隊通常也都會有一份開發規定進行對應處理，方便每個人在開發專案時有一定的共識。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[官方] <a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/reference/exceptions.html">Kotlin 官方資料</a></li>
+<li>[文章] <a target="_blank" rel="noopener" href="https://medium.com/@kazafchen/kotlin-checked-exception-a9a096e9e49f">Kotlin &amp; Checked Exception</a></li>
+<li>[文章] <a target="_blank" rel="noopener" href="http://teddy-chen-tw.blogspot.com/2013/11/javatrycatchfinally7.html">Java的try、catch、finally（7）：責任分擔</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-08/" title="[Day 08] 遠征 Kotlin × 類別繼承、介面、抽象"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-10/" title="[Day 10] 遠征 Kotlin × 泛型 Generic"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-09/';
+        
+        this.page.identifier = 'ironman-2020-09';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

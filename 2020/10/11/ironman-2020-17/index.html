@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 17] 遠征 Kotlin × 使用 Spring Data JPA 操作資料庫 (2) | Devin Blog</title>
+  <meta name="description" content="ORM 介紹昨日，我們直接利用實作來感受 Spring Data JPA 的快速開發，會發現到我們只要建立 Entity，就可以幫助我們做資料庫映射來新增資料表與欄位，而此特性就是 Object-Relation Mapping－簡稱 ORM，就是將資料庫的內容映射為物件，讓我們可以用操作物件的方式對資料庫進行操作，而不用直接使用 SQL 語法對資料庫進行操作，甚至我們不用管底層的資料庫系統是什麼">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 17] 遠征 Kotlin × 使用 Spring Data JPA 操作資料庫 (2)">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-17/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="ORM 介紹昨日，我們直接利用實作來感受 Spring Data JPA 的快速開發，會發現到我們只要建立 Entity，就可以幫助我們做資料庫映射來新增資料表與欄位，而此特性就是 Object-Relation Mapping－簡稱 ORM，就是將資料庫的內容映射為物件，讓我們可以用操作物件的方式對資料庫進行操作，而不用直接使用 SQL 語法對資料庫進行操作，甚至我們不用管底層的資料庫系統是什麼">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200926/20121179NNCI3LgF8I.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200926/20121179XTiujLHbvL.png">
+<meta property="article:published_time" content="2020-10-11T11:16:25.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:16:25.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200926/20121179NNCI3LgF8I.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-17/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-17" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 17] 遠征 Kotlin × 使用 Spring Data JPA 操作資料庫 (2)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-17/" class="article-date">
+	  <time datetime="2020-10-11T11:16:25.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-17/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="ORM-介紹"><a href="#ORM-介紹" class="headerlink" title="ORM 介紹"></a>ORM 介紹</h2><p>昨日，我們直接利用實作來感受 <code>Spring Data JPA</code> 的快速開發，會發現到我們只要建立 <code>Entity</code>，就可以幫助我們做資料庫映射來新增資料表與欄位，而此特性就是 <code>Object-Relation Mapping</code>－簡稱 ORM，就是將資料庫的內容映射為物件，讓我們可以用操作物件的方式對資料庫進行操作，而不用直接使用 SQL 語法對資料庫進行操作，甚至我們不用管底層的資料庫系統是什麼樣的資料庫，例如 SQL Server、MySQL，僅須使用同一套語法撰寫存取資料庫的邏輯，<strong>大幅降低程式與資料庫之間的耦合關係</strong>。</p>
+<h2 id="Spring-Data-JPA-介紹"><a href="#Spring-Data-JPA-介紹" class="headerlink" title="Spring Data JPA 介紹"></a>Spring Data JPA 介紹</h2><p>再來，我們來深入了解什麼是 <code>Spring Data JPA</code>，它其實是 Spring 與 JPA 的整合，<code>JPA</code> 是一種 ORM 規範，是 <code>Hibernate</code>（ORM 框架）的一個抽象，就像 JDBC 與 JDBC driver的關係，Hibernate 實作了 JPA 定義的規範，而 Spring Data JPA 則是<strong>基於 JPA 對資料庫溝通層進行封裝的應用框架</strong>，目標是希望簡化資料庫溝通層操作，內部涵蓋許多針對資料庫資料操作的解決方案。</p>
+<h2 id="資料持久層-Data-Persistence-Layer"><a href="#資料持久層-Data-Persistence-Layer" class="headerlink" title="資料持久層 Data Persistence Layer"></a>資料持久層 Data Persistence Layer</h2><p>昨日我們在實作程式有建立一個 <code>StudentDao</code> 程式，而所謂 DAO 其實是 <code>Data Access Object</code> 資料存取物件的縮寫，而資料持久層的意思就是把資料儲存的相關操作從原本架構解耦，即降低程式與資料庫的相依性，獨立出一個專門處理相關事務邏輯的物件，達到不同資料庫的統一存取方法，單一職責原則。</p>
+<h2 id="資料傳輸物件-Data-Transfer-Object-DTO"><a href="#資料傳輸物件-Data-Transfer-Object-DTO" class="headerlink" title="資料傳輸物件 Data Transfer Object (DTO)"></a>資料傳輸物件 Data Transfer Object (DTO)</h2><p>上面我們介紹了 DAO 物件，我們再介紹一個物件－DTO，此物件的作用如同名稱，主要是作為傳輸資料所使用，使用 DTO 可以讓我們減少參數傳遞的混亂，增加程式可讀性，也具備封裝性與擴充性，可以讓我們將一些必要傳遞但不希望被操作的資料進行封裝，或如果業務需要增加傳遞資料或對傳遞資料進行特定處理，只需要在物件增加欄位或修改即可。</p>
+<h2 id="Spring-Data-JPA-方法定義規則"><a href="#Spring-Data-JPA-方法定義規則" class="headerlink" title="Spring Data JPA 方法定義規則"></a>Spring Data JPA 方法定義規則</h2><p>昨日我們在撰寫 Dao 程式中會去實作 <code>JpaRepository</code> 與 <code>JpaSpecificationExecutor</code> 介面，而此兩個介面內容就是 Spring Data 所設計的基礎資料庫操作方法，可以讓類別實作後就可以輕易操作資料庫動作。JpaRepository 是<strong>提供基本 CRUD 相關操作方法</strong>，JpaSpecificationExecutor 則是<strong>提供一些複雜查詢方法</strong>，我們可以直接使用方法名稱快速進行資料庫操作，如下範例：</p>
+<blockquote>
+<p>此文章有提供<a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-jpa-example">範例程式碼</a>在 Github 供大家參考</p>
+</blockquote>
+<p>在昨天的範例中，我們增加一個專案需求－利用姓名參數查詢學生資料：</p>
+<ol>
+<li><p>在 StudentDao 加入 findByName 函數</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">findByName</span><span class="params">(name: <span class="type">String</span>)</span></span>: Student?</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 StudentController 加入「查詢指定姓名的學生資料」函數－ getStudentByName 函數</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">&quot;/api&quot;</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentController</span></span>(<span class="meta">@Autowired</span> <span class="keyword">val</span> studentDao: StudentDao) &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 取得 Student 所有資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(<span class="meta-string">&quot;/students&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getStudentData</span><span class="params">()</span></span>: MutableList&lt;Student&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> studentDao.findAll()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增 Student 資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping(<span class="meta-string">&quot;/students&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">addStudentData</span><span class="params">(<span class="meta">@RequestBody</span> student: <span class="type">Student</span>)</span></span>: Student &#123;</span><br><span class="line">        <span class="keyword">return</span> studentDao.save(student)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查詢指定姓名的學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping(<span class="meta-string">&quot;/students/search&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getStudentByName</span><span class="params">(<span class="meta">@RequestParam</span> name: <span class="type">String</span>)</span></span>: Student? &#123;</span><br><span class="line">        <span class="keyword">return</span> studentDao.findByName(name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 Student.http 加入測試API 方法</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">### 利用姓名參數查詢學生資料</span></span><br><span class="line"><span class="string">POST</span> <span class="string">http://localhost:8080/api/students/search?name=Devin</span></span><br><span class="line"><span class="attr">Content-Type:</span> <span class="string">application/json</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最後再進行測試，假設我們資料庫的學生資料表有 Devin 這筆資料時，我們應得到以下結果：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200926/20121179NNCI3LgF8I.png" alt="https://ithelp.ithome.com.tw/upload/images/20200926/20121179NNCI3LgF8I.png"></p>
+</li>
+</ol>
+<p>上面範例就是我們使用 Spring Data JPA 的方法名稱特性進行查詢的範例，其餘方法名稱的查詢規則，我們可以到 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods">Spring Data JPA 官網</a>進行查詢，官網在規則這塊寫的非常清楚，此部份就不再補充，建議大家可以邊查詢邊撰寫程式進行測試，官網內容如下圖：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200926/20121179XTiujLHbvL.png" alt="https://ithelp.ithome.com.tw/upload/images/20200926/20121179XTiujLHbvL.png"></p>
+<blockquote>
+<p>此文章有提供<a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-jpa-example">範例程式碼</a>在 Github 供大家參考</p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[官方] <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-jpa">Spring Data JPA</a></li>
+<li>[文章] <a target="_blank" rel="noopener" href="http://blog.twbryce.com/what-is-orm/">ORM介紹及ORM優點、缺點</a></li>
+<li>[文章] <a target="_blank" rel="noopener" href="https://1fly2sky.wordpress.com/2016/04/05/%E6%8C%81%E4%B9%85%E5%B1%A4data-persistence-layer/">持久層(Data Persistence Layer)</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-16/" title="[Day 16] 遠征 Kotlin × 使用 Spring Data JPA 操作資料庫 (1)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-18/" title="[Day 18] 遠征 Kotlin × Spring Boot 使用 RESTful API (1)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-17/';
+        
+        this.page.identifier = 'ironman-2020-17';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

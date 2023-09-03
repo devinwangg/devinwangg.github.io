@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 20] 遠征 Kotlin × Spring Boot 使用分層架構 Layered Architecture | Devin Blog</title>
+  <meta name="description" content="軟體系統架構是建構者賦予系統的樣貌，而該樣貌是由不同元件組合而成，元件之間會有不同的合作與溝通方式，目的是為了讓軟體系統在開發、部署、運行和維護都能輕鬆理解與開發，也讓系統的生命週期成本趨近最小化，使程式設計師生產力最大化。—《Clean Architecture》 而本章將要介紹架構—分層架構（Layered Architecture），又稱為Ｎ層架構模式（N-tier Architecture">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 20] 遠征 Kotlin × Spring Boot 使用分層架構 Layered Architecture">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-20/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="軟體系統架構是建構者賦予系統的樣貌，而該樣貌是由不同元件組合而成，元件之間會有不同的合作與溝通方式，目的是為了讓軟體系統在開發、部署、運行和維護都能輕鬆理解與開發，也讓系統的生命週期成本趨近最小化，使程式設計師生產力最大化。—《Clean Architecture》 而本章將要介紹架構—分層架構（Layered Architecture），又稱為Ｎ層架構模式（N-tier Architecture">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200929/20121179aThMFJFPPl.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200929/20121179SKLAWjkJUj.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20200930/20121179KkrwO7NMy1.png">
+<meta property="article:published_time" content="2020-10-11T11:15:37.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:15:37.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20200929/20121179aThMFJFPPl.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-20/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-20" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 20] 遠征 Kotlin × Spring Boot 使用分層架構 Layered Architecture
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-20/" class="article-date">
+	  <time datetime="2020-10-11T11:15:37.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-20/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>軟體系統架構是建構者賦予系統的樣貌，而該樣貌是由不同元件組合而成，元件之間會有不同的合作與溝通方式，目的是為了<strong>讓軟體系統在開發、部署、運行和維護都能輕鬆理解與開發，也讓系統的生命週期成本趨近最小化，使程式設計師生產力最大化。</strong>—《Clean Architecture》</p>
+<p>而本章將要介紹架構—<code>分層架構（Layered Architecture）</code>，又稱為Ｎ層架構模式（N-tier Architecture Pattern），是軟體開發中經常看到的架構之一，它的每一層都有自己所負責的任務，每一層也有許多好處，例如：</p>
+<ul>
+<li><strong>簡化複雜性</strong>，達到關注點分離、結構清晰</li>
+<li><strong>降低耦合度</strong>，隔離層與層之間的關聯，降低彼此依賴，上層不需要了解下層狀況，利於分工、測試與維護</li>
+<li><strong>提高靈活性</strong>，可以靈活替換某一層的實作方法</li>
+<li><strong>提高擴展性</strong>，方便實現分散式部署方法</li>
+</ul>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200929/20121179aThMFJFPPl.png" alt="https://ithelp.ithome.com.tw/upload/images/20200929/20121179aThMFJFPPl.png"></p>
+<p>而在 Spring Boot 常見的階層架構會將專案分為四個主要類別：</p>
+<ul>
+<li><p><strong>表示層 Presentation Layer</strong></p>
+<p>  屬於該架構頂層，主要負責 Http 請求、路由處理、身份驗證與Json資料轉換處理，會將資料傳遞到業務邏輯層進行溝通</p>
+</li>
+<li><p><strong>業務邏輯層 Business Layer</strong></p>
+<p>  主要處理專案所有相關業務邏輯，包含處理業務規則、流程、資料完整性等，並接收來自表示層的資料請求，進行邏輯處理後，會轉向與資料持久層提交請求並傳遞資料結果。</p>
+</li>
+<li><p><strong>資料持久層 Persistence Layer</strong></p>
+<p>  作為應用程式與資料庫之間的抽象層，將業務層需要使用的物件映射到資料庫進行相互轉換與溝通</p>
+</li>
+<li><p><strong>資料庫層 Database Layer</strong></p>
+<p>  主要由資料庫組成，所有資料庫相關操作與設定都會於此層處理</p>
+</li>
+</ul>
+<p>在實作上，可參考下圖《 Spring Boot Flow Architecture》，Client 端會與 Controller 層進行 Http 請求溝通，而 Service 層會針對專案業務邏輯進行處理與請求數據，持久層則是利用 DAO 物件進行資料庫溝通實現，達到不同層處理各自的職責。</p>
+<p><img src="https://ithelp.ithome.com.tw/upload/images/20200929/20121179SKLAWjkJUj.png" alt="https://ithelp.ithome.com.tw/upload/images/20200929/20121179SKLAWjkJUj.png"></p>
+<p>接下來我們進入實作步驟部份：</p>
+<ol>
+<li><p>首先在專案內建立 <code>Controller</code> 資料夾並將之前的 Controller 改用 <code>Interface</code> 進行定義，此作法主要是為了解耦合，當我們要修改Controller 實現方法時，只要修改實作 Implement 即可</p>
+<ul>
+<li><p>Interface 部份定義需求</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">StudentController</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 取得 Student 所有資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(<span class="meta-string">&quot;/students&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getStudentData</span><span class="params">()</span></span>: MutableList&lt;Student&gt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增 Student 資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping(<span class="meta-string">&quot;/students&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">addStudentData</span><span class="params">(<span class="meta">@RequestBody</span> student: <span class="type">Student</span>)</span></span> : Student</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 利用姓名查詢學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping(<span class="meta-string">&quot;/students/search&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getStudentByName</span><span class="params">(<span class="meta">@RequestParam</span> name: <span class="type">String</span>)</span></span> : ResponseEntity&lt;List&lt;Student&gt;&gt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 修改學生全部資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PutMapping(<span class="meta-string">&quot;/students/&#123;id&#125;&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">updateStudent</span><span class="params">(<span class="meta">@PathVariable</span> id: <span class="type">Int</span>, <span class="meta">@RequestBody</span> student: <span class="type">Student</span>)</span></span> : ResponseEntity&lt;Student?&gt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 修改學生信箱（欲更新部份資料）</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PatchMapping(<span class="meta-string">&quot;/students/&#123;id&#125;&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">updateStudentEmail</span><span class="params">(<span class="meta">@PathVariable</span> id: <span class="type">Int</span>, <span class="meta">@RequestBody</span> student: <span class="type">Student</span>)</span></span>: ResponseEntity&lt;Student?&gt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 刪除學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@DeleteMapping(<span class="meta-string">&quot;/students/&#123;id&#125;&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">deleteStudent</span><span class="params">(<span class="meta">@PathVariable</span> id: <span class="type">Int</span>)</span></span>: ResponseEntity&lt;Any&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>implement controller 進行實作</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">&quot;/api&quot;</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentControllerImpl</span></span>(<span class="meta">@Autowired</span> <span class="keyword">val</span> studentDao: StudentDao) : StudentController &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getStudentData</span><span class="params">()</span></span>: MutableList&lt;Student&gt; = studentDao.findAll()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">addStudentData</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student = studentDao.save(student)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getStudentByName</span><span class="params">(name: <span class="type">String</span>)</span></span>: ResponseEntity&lt;List&lt;Student&gt;&gt;</span><br><span class="line">            = studentDao</span><br><span class="line">            .findByName(name)</span><br><span class="line">            .let &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity(it, HttpStatus.OK)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateStudent</span><span class="params">(id: <span class="type">Int</span>, student: <span class="type">Student</span>)</span></span>: ResponseEntity&lt;Student?&gt;</span><br><span class="line">            = studentDao</span><br><span class="line">            .findById(id)</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">this</span> ?: <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(<span class="literal">null</span>, HttpStatus.NOT_FOUND)</span><br><span class="line">            &#125;.run &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(studentDao.save(<span class="keyword">this</span>), HttpStatus.OK)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateStudentEmail</span><span class="params">(id: <span class="type">Int</span>, student: <span class="type">Student</span>)</span></span>: ResponseEntity&lt;Student?&gt;</span><br><span class="line">            = studentDao</span><br><span class="line">            .findById(id)</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">this</span> ?: <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(<span class="literal">null</span>, HttpStatus.NOT_FOUND)</span><br><span class="line">            &#125;</span><br><span class="line">            .run &#123;</span><br><span class="line">                Student(</span><br><span class="line">                        id = <span class="keyword">this</span>.id,</span><br><span class="line">                        name = <span class="keyword">this</span>.name,</span><br><span class="line">                        email = student.email</span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(studentDao.save(<span class="keyword">this</span>), HttpStatus.OK)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">deleteStudent</span><span class="params">(id: <span class="type">Int</span>)</span></span>: ResponseEntity&lt;Any&gt;</span><br><span class="line">            = studentDao</span><br><span class="line">            .findById(id)</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">this</span> ?: <span class="keyword">return</span> ResponseEntity&lt;Any&gt;(<span class="literal">null</span>, HttpStatus.NOT_FOUND)</span><br><span class="line">            &#125;</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity&lt;Any&gt;(studentDao.delete(<span class="keyword">this</span>), HttpStatus.NO_CONTENT)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>建立 <code>Data</code> 資料夾存放 <code>DAO</code> 、 <code>Entity</code> 物件，再建立 <code>Service</code> 資料夾準備建立 Service 物件，資料夾結構應如下圖：<br><img src="https://ithelp.ithome.com.tw/upload/images/20200930/20121179KkrwO7NMy1.png" alt="https://ithelp.ithome.com.tw/upload/images/20200930/20121179KkrwO7NMy1.png"></p>
+</li>
+<li><p>建立 <code>Service</code> 物件 <code>StudentService.kt</code>，建立時如同第一步驟的Controller，先使用 <code>Interface</code> 定義業務邏輯需求再進行實作，最後再將原本的Controller改使用Service進行資料請求，程式如下：</p>
+<ul>
+<li><p>Interface 定義業務邏輯需求</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">StudentService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查詢所有學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">findAllStudent</span><span class="params">()</span></span>: MutableList&lt;Student&gt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">addStudent</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查詢符合姓名條件的學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">findByStudentId</span><span class="params">(id: <span class="type">Int</span>)</span></span>: Student?</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查詢符合姓名條件的學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">findByStudentName</span><span class="params">(name: <span class="type">String</span>)</span></span>: List&lt;Student&gt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更新學生整個資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">updateStudent</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更新學生信箱資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">updateStudentEmail</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 刪除學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">deleteStudent</span><span class="params">(student: <span class="type">Student</span>)</span></span>: <span class="built_in">Unit</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Implement Service 進行實作</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentServiceImpl</span></span>(<span class="meta">@Autowired</span> <span class="keyword">val</span> studentDao: StudentDao) : StudentService &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">findAllStudent</span><span class="params">()</span></span>: MutableList&lt;Student&gt; = studentDao.findAll()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">addStudent</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student =</span><br><span class="line">            Student(</span><br><span class="line">                    name = student.name.trim(),</span><br><span class="line">                    email = student.email.trim()</span><br><span class="line">            ).run &#123;</span><br><span class="line">                <span class="keyword">return</span> studentDao.save(<span class="keyword">this</span>)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">findByStudentId</span><span class="params">(id: <span class="type">Int</span>)</span></span>: Student? = studentDao.findById(id)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">findByStudentName</span><span class="params">(name: <span class="type">String</span>)</span></span>: List&lt;Student&gt; = studentDao.findByName(name)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateStudent</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student =</span><br><span class="line">            Student(</span><br><span class="line">                    id = student.id,</span><br><span class="line">                    name = student.name.trim(),</span><br><span class="line">                    email = student.email.trim()</span><br><span class="line">            ).run &#123;</span><br><span class="line">                <span class="keyword">return</span> studentDao.save(<span class="keyword">this</span>)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateStudentEmail</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student =</span><br><span class="line">            Student(</span><br><span class="line">                    id = student.id,</span><br><span class="line">                    name = student.name,</span><br><span class="line">                    email = student.email.trim()</span><br><span class="line">            ).run &#123;</span><br><span class="line">                <span class="keyword">return</span> studentDao.save(<span class="keyword">this</span>)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">deleteStudent</span><span class="params">(student: <span class="type">Student</span>)</span></span>: <span class="built_in">Unit</span> = studentDao.delete(student)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 Controller 對業務邏輯層的呼叫請求方法（原先是直接使用 DAO 物件）</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">&quot;/api&quot;</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentControllerImpl</span></span>(<span class="meta">@Autowired</span> <span class="keyword">val</span> studentService: StudentService) : StudentController &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 取得 Student 所有資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getStudentData</span><span class="params">()</span></span>: MutableList&lt;Student&gt; = studentService.findAllStudent()</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增 Student 資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">addStudentData</span><span class="params">(student: <span class="type">Student</span>)</span></span>: Student = studentService.addStudent(student)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 利用姓名查詢學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getStudentByName</span><span class="params">(name: <span class="type">String</span>)</span></span>: ResponseEntity&lt;List&lt;Student&gt;&gt;</span><br><span class="line">            = studentService</span><br><span class="line">            .findByStudentName(name)</span><br><span class="line">            .let &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity(it, HttpStatus.OK)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 修改學生全部資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateStudent</span><span class="params">(id: <span class="type">Int</span>, student: <span class="type">Student</span>)</span></span>: ResponseEntity&lt;Student?&gt;</span><br><span class="line">            = studentService</span><br><span class="line">            .findByStudentId(id)</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">this</span> ?: <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(<span class="literal">null</span>, HttpStatus.NOT_FOUND)</span><br><span class="line">            &#125;.run &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(studentService.updateStudent(<span class="keyword">this</span>), HttpStatus.OK)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 修改學生信箱（欲更新部份資料）</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateStudentEmail</span><span class="params">(id: <span class="type">Int</span>, student: <span class="type">Student</span>)</span></span>: ResponseEntity&lt;Student?&gt;</span><br><span class="line">            = studentService</span><br><span class="line">            .findByStudentId(id)</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">this</span> ?: <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(<span class="literal">null</span>, HttpStatus.NOT_FOUND)</span><br><span class="line">            &#125;</span><br><span class="line">            .run &#123;</span><br><span class="line">                Student(</span><br><span class="line">                        id = <span class="keyword">this</span>.id,</span><br><span class="line">                        name = <span class="keyword">this</span>.name,</span><br><span class="line">                        email = student.email</span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity&lt;Student?&gt;(studentService.updateStudentEmail(<span class="keyword">this</span>), HttpStatus.OK)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 刪除學生資料</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">deleteStudent</span><span class="params">(id: <span class="type">Int</span>)</span></span>: ResponseEntity&lt;Any&gt;</span><br><span class="line">            = studentService</span><br><span class="line">            .findByStudentId(id)</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">this</span> ?: <span class="keyword">return</span> ResponseEntity&lt;Any&gt;(<span class="literal">null</span>, HttpStatus.NOT_FOUND)</span><br><span class="line">            &#125;</span><br><span class="line">            .run &#123;</span><br><span class="line">                <span class="keyword">return</span> ResponseEntity&lt;Any&gt;(studentService.deleteStudent(<span class="keyword">this</span>), HttpStatus.NO_CONTENT)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>此文章有提供<a target="_blank" rel="noopener" href="https://github.com/Xiang36/ironman-architecture-example">範例程式碼</a>在 Github 供大家參考</p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[書籍] <a target="_blank" rel="noopener" href="https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164">Clean Architecture: A Craftsman’s Guide to Software Structure and Design</a></li>
+<li>[文章] <a target="_blank" rel="noopener" href="https://www.tutorialandexample.com/spring-boot-architecture/">Spring Boot Architecture</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-19/" title="[Day 19] 遠征 Kotlin × Spring Boot 使用 RESTful API (2)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-21/" title="[Day 21] 遠征 Kotlin × Spring Boot 爬蟲實戰教學"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-20/';
+        
+        this.page.identifier = 'ironman-2020-20';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

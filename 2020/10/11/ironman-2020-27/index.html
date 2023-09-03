@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <meta name="theme-color" content="#000000" />
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>[Day 27] 遠征 Kotlin × Spring Boot 介紹 Spring AOP 機制 | Devin Blog</title>
+  <meta name="description" content="切面導向程式設計（Aspect-oriented programming, AOP)，又譯為面向方面程式設計、剖面導向程式設計，此設計最主要目的是實現關注點分離（Separation of concerns），希望將專案的橫切關注點與業務核心主體進行分離，以提高程式碼的模組化程度，使得我們可以直接將與核心業務功能關係較不相關的功能直接添加至程式中，同時又不會造成核心功能的程式可讀性複雜化，例如 L">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Day 27] 遠征 Kotlin × Spring Boot 介紹 Spring AOP 機制">
+<meta property="og:url" content="http://devinwangg.github.io/2020/10/11/ironman-2020-27/index.html">
+<meta property="og:site_name" content="Devin Blog">
+<meta property="og:description" content="切面導向程式設計（Aspect-oriented programming, AOP)，又譯為面向方面程式設計、剖面導向程式設計，此設計最主要目的是實現關注點分離（Separation of concerns），希望將專案的橫切關注點與業務核心主體進行分離，以提高程式碼的模組化程度，使得我們可以直接將與核心業務功能關係較不相關的功能直接添加至程式中，同時又不會造成核心功能的程式可讀性複雜化，例如 L">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201006/20121179ENF3HjSkze.png">
+<meta property="og:image" content="https://ithelp.ithome.com.tw/upload/images/20201006/20121179yWxARLJpF1.png">
+<meta property="article:published_time" content="2020-10-11T11:08:22.000Z">
+<meta property="article:modified_time" content="2020-10-11T11:08:22.000Z">
+<meta property="article:author" content="Devin">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ithelp.ithome.com.tw/upload/images/20201006/20121179ENF3HjSkze.png">
+  <link rel="canonical" href="http://devinwangg.github.io/2020/10/11/ironman-2020-27/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Devin Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Xiang36" target="_blank">
+          <img class="img-circle img-rotate" src="/images/author.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Devin</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Software Enginner</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Taipei, Taiwan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a><span class="category-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a><span class="tag-list-count">19</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Kotlin/" style="font-size: 13px;">Kotlin</a> <a href="/tags/Spring-Boot/" style="font-size: 14px;">Spring Boot</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">30</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-03/" class="title">[Day 03] 遠征 Kotlin × 變數型別</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:30:04.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-04/" class="title">[Day 04] 遠征 Kotlin × 流程控制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:29:42.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-05/" class="title">[Day 05] 遠征 Kotlin × 函數介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:28:23.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-06/" class="title">[Day 06] 遠征 Kotlin × Collections 介紹</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:27:51.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/ironman-2020-07/" class="title">[Day 07] 遠征 Kotlin × 類別與物件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:23:50.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ironman-2020-27" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [Day 27] 遠征 Kotlin × Spring Boot 介紹 Spring AOP 機制
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/11/ironman-2020-27/" class="article-date">
+	  <time datetime="2020-10-11T11:08:22.000Z" itemprop="datePublished">2020-10-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/2020-IThome%E9%90%B5%E4%BA%BA%E8%B3%BD/">2020-IThome鐵人賽</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/10/11/ironman-2020-27/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p><code>切面導向程式設計</code>（Aspect-oriented programming, AOP)，又譯為<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%9A%84%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1">面向方面程式設計、剖面導向程式設計</a>，此設計<strong>最主要目的是實現關注點分離（Separation of concerns）</strong>，希望將專案的橫切關注點與業務核心主體進行分離，以提高程式碼的模組化程度，使得我們可以直接將與核心業務功能關係較不相關的功能直接添加至程式中，同時又不會造成核心功能的程式可讀性複雜化，例如 Log 紀錄檔功能。</p>
+<p>故 AOP 機制可以讓我們將一些非功能性配置與核心業務功能進行分離，非功能性配置有例如日誌紀錄、效能統計、安全控制、事務處理、異常處理等配置，此優點又可以讓我們更專注在業務邏輯上的開發，不會有非功能性配置與業務功能耦合性問題。</p>
+<p>AOP 有以下相關主要術語：</p>
+<ul>
+<li><strong>Aspect 切面</strong>：由 <code>切入點（PointCut）</code>與 <code>通知（Advice）</code>組成，主要就是用來設定切入點（PointCut）與切入特定動作（Advice）</li>
+<li><strong>PointCut 切點</strong>：設定要被 <code>AOP</code> 切入的位置，例如某個類別或函數</li>
+<li><strong>JoinPoint 連接點</strong>：為 <code>PointCut</code> 切入後的<code>實際切入點</code>，通常是一個函數</li>
+<li><strong>Advice 通知</strong>：為 <code>Joint Point</code> 切入點實際要執行的動作，通常會將 Advice 模擬為一個攔截器（Interceptor），並且會在連接點（Join Point）上維護多個 Advice 進行層層攔截</li>
+</ul>
+<p>Advice 又可以分為五種類型：</p>
+<ul>
+<li><strong>@Before 前置通知</strong> — 在呼叫方法前執行</li>
+<li><strong>@AfterReturn 正常返回通知</strong> — 正常返回方法後執行</li>
+<li><strong>@AfterThrowing 異常返回通知</strong> — 在連接點拋出異常後執行</li>
+<li><strong>@After 返回通知</strong> — 方法最終結束後執行，相當於finaly</li>
+<li><strong>@Around 環繞通知</strong> — 圍繞整個方法</li>
+</ul>
+<blockquote>
+<p>五種類型執行順序為 @Around &gt; @Before &gt; @Around &gt; @After &gt; @AfterReturning</p>
+</blockquote>
+<p>接下來我們直接介紹實作：</p>
+<ol>
+<li><p>使用前面專案的 Todo 專案增加 AOP 方法，當使用者操作 Service 時，新增 Log 紀錄檔<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201006/20121179ENF3HjSkze.png" alt="https://ithelp.ithome.com.tw/upload/images/20201006/20121179ENF3HjSkze.png"></p>
+</li>
+<li><p>新增 ServiceAspect.kt 檔案，內容如下：</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ServiceAspect</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 第一個 * 表示任意返回值</span></span><br><span class="line">    <span class="comment">// com.inroman.demo... 為 package 路徑</span></span><br><span class="line">    <span class="comment">// 第二個 * 表示任何 Service 物件</span></span><br><span class="line">    <span class="comment">// 第三個 .*(..) 則表示任何方法</span></span><br><span class="line">    <span class="meta">@Pointcut(<span class="meta-string">&quot;execution(* com.ironman.demo.service.*.*(..))&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">pointcut</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 設定 Before 通知並執行 pointcut 切點</span></span><br><span class="line">    <span class="meta">@Before(<span class="meta-string">&quot;pointcut()&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">before</span><span class="params">(joinPoint: <span class="type">JoinPoint</span>)</span></span> &#123;</span><br><span class="line">        <span class="comment">// 設定 Logger 帶入切入點類別名稱</span></span><br><span class="line">        <span class="keyword">val</span> logger = LoggerFactory.getLogger(joinPoint.target.javaClass.name)</span><br><span class="line">        <span class="comment">// 取得切入點方法</span></span><br><span class="line">        <span class="keyword">val</span> methodSignature: MethodSignature = joinPoint.signature <span class="keyword">as</span> MethodSignature</span><br><span class="line">        <span class="comment">// 取得切入點方法名稱</span></span><br><span class="line">        <span class="keyword">val</span> methodName = methodSignature.method.name</span><br><span class="line">        <span class="comment">// 取得切入點方法類別</span></span><br><span class="line">        <span class="keyword">val</span> className = joinPoint.target.javaClass.name</span><br><span class="line">        <span class="comment">// 取得切入點方法參數</span></span><br><span class="line">        <span class="keyword">val</span> argsInfo = joinPoint.args</span><br><span class="line">        logger.info(<span class="string">&quot;[處理開始] Service： <span class="variable">$className</span>, Method：<span class="variable">$methodName</span>, Args： <span class="variable">$argsInfo</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 設定 After 通知並執行 pointcut 切點</span></span><br><span class="line">    <span class="meta">@After(<span class="meta-string">&quot;pointcut()&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">after</span><span class="params">(joinPoint: <span class="type">JoinPoint</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> logger = LoggerFactory.getLogger(joinPoint.target.javaClass.name)</span><br><span class="line">        <span class="keyword">val</span> methodSignature: MethodSignature = joinPoint.signature <span class="keyword">as</span> MethodSignature</span><br><span class="line">        <span class="keyword">val</span> methodName = methodSignature.method.name</span><br><span class="line">        <span class="keyword">val</span> className = joinPoint.target.javaClass.name</span><br><span class="line">        <span class="keyword">val</span> argsInfo = joinPoint.args</span><br><span class="line">        logger.info(<span class="string">&quot;[處理結束] Service： <span class="variable">$className</span>, Method： <span class="variable">$methodName</span>, Args： <span class="variable">$argsInfo</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>觀察專案運行 Log<br> <img src="https://ithelp.ithome.com.tw/upload/images/20201006/20121179yWxARLJpF1.png" alt="https://ithelp.ithome.com.tw/upload/images/20201006/20121179yWxARLJpF1.png"></p>
+</li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li>[官方] <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#aop-api">Spring AOP</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/11/ironman-2020-26/" title="[Day 26] 遠征 Kotlin × Spring Boot 部署網站到 Heroku"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/ironman-2020-28/" title="[Day 28] 遠征 Kotlin × Spring Boot 介紹 WebSocket 實作"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Xiang36/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.facebook.com/xiang36" target="_blank" title="Facebook" data-toggle=tooltip data-placement=top><i class="icon icon-facebook"></i></a></li>
+        
+        <li><a href="https://www.linkedin.com/in/weixiang-wang-23664399/" target="_blank" title="Linkedin" data-toggle=tooltip data-placement=top><i class="icon icon-linkedin"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json?',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://devinwangg.github.io/2020/10/11/ironman-2020-27/';
+        
+        this.page.identifier = 'ironman-2020-27';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'DevinWang' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
